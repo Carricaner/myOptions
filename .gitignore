@@ -1,8 +1,9 @@
+# npm stuff
 /node_modules
 
-
+# env file
 .env
 
-
+# python files
 fetchTAIEX_Darren_Version.py
 
