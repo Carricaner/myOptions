@@ -9,3 +9,10 @@ fetchTAIEX_Darren_Version.py
 
 # csv file
 realtimeData.csv
+
+# debug.log
+debug.log
+
+#__pycache__
+
+/python-crawler/__pycache__

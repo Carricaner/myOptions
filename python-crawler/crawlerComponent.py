@@ -6,42 +6,63 @@ import datetime
 import threading
 import pytz
 
+# sample@
+# crawlerParams = {
+#     'isDay': True,  #False => Night
+#     'isheadless': True,
+#     'headless_argu': ['--headless', '--disable-notifications'],
+#     'startTime': datetime.time(11, 0, 0),
+#     'endTime': datetime.time(21, 0, 0),
+#     'curTime': currentTimeGetter('Asia/Shanghai')
+# }
 
-def mainCrawler(dayNightChanger, startTime, endTime, headless = True):
-    # choose day or night
-    if ( dayNightChanger == 'day' ):
-        url = "https://mis.taifex.com.tw/futures/RegularSession/EquityIndices/Options/"  # 日盤
-    elif (dayNightChanger == 'night'):
-        url = "https://mis.taifex.com.tw/futures/AfterHoursSession/EquityIndices/Options/"  # 夜盤
+
+def mainCrawler(crawlerParams):
     
-    # choose whether headless or not
-    if ( headless ):
-        option = webdriver.ChromeOptions()
-        option.add_argument('--headless')
-        option.add_argument('--disable-notifications')
-        driver = webdriver.Chrome(options = option)
+    start = crawlerParams['startTime']
+    end = crawlerParams['endTime']
+    current = crawlerParams['curTime']
+
+    if (time_in_range(start, end, current)):
+        # choose day or night
+        if ( crawlerParams['isDay'] ):
+            url = "https://mis.taifex.com.tw/futures/RegularSession/EquityIndices/Options/"  # 日盤
+        else:
+            url = "https://mis.taifex.com.tw/futures/AfterHoursSession/EquityIndices/Options/"  # 夜盤
+        
+        # choose whether headless or not
+        if ( crawlerParams['isheadless'] ):
+            option = webdriver.ChromeOptions()
+            for item in crawlerParams['headless_argu']:
+                option.add_argument(item)
+            driver = webdriver.Chrome(options = option)
+        else:
+            driver = webdriver.Chrome()
+        
+        # get URL & click confirm button
+        driver.get(url)
+        time.sleep(2)
+        confirmBtn = driver.find_element_by_css_selector("#content > main > div.container > div.approve-wrap > button:nth-child(2)")
+        confirmBtn.click()
+        time.sleep(2)
+
+        # deliver page-source to parse HTML
+        for i in range(2):
+            page_source = driver.page_source
+            data = htmlScriptParser(page_source)
+            print(data)
+            print()
+            time.sleep(5)
+            
+        # csvUpdatter(data)
+        # print("csv updated!")
+
+        # Close window
+        driver.quit() 
+
     else:
-        driver = webdriver.Chrome()
-    # get URL
-    driver.get(url) 
-    time.sleep(2)
-    # click confirm button
-    refreshBtn = driver.find_element_by_css_selector("#content > main > div.container > div.approve-wrap > button:nth-child(2)")
-    refreshBtn.click()
-    time.sleep(2)
-
-    # deliver page-source to parse HTML
-    page_source = driver.page_source
-    data = htmlScriptParser(page_source)
-    csvUpdatter(data)
-    print("csv updated!")
-
-    # parseHTMLrepeater(startTime, endTime, htmlScriptParser, page_source, csvUpdatter)
-    
-    
-
-    # Close window
-    driver.quit() 
+        print("Trading time is over... ready to sleep for another term")
+        time.sleep(60*15)
 
 
 
@@ -92,21 +113,6 @@ def csvUpdatter(data):
         writer.writerows(data)
 
 
-# def parseHTMLrepeater(startTime, endTime, parseHTML, htmlSource, writeCSV):
-#     timezone = 'Asia/Shanghai'
-#     curWholeTime = currentTimeGetter(timezone)
-
-#     if (time_in_range(startTime, endTime, curWholeTime)):
-#         data = parseHTML(htmlSource)
-#         writeCSV(data)
-#         print("CSV updated!")
-#         timer = threading.Timer(25, parseHTMLrepeater, (startTime, endTime, parseHTML, htmlSource, writeCSV))
-#         timer.start()
-#     else:
-#         return
-
-
-
 def currentTimeGetter(timezone):
     # Choose Changhai's time zone
     tz = pytz.timezone(timezone)
@@ -115,7 +121,7 @@ def currentTimeGetter(timezone):
     curSec = datetime.datetime.now(tz).second
     return datetime.time(curHr, curMin, curSec)    
 
-
+# 搬家的時候要注意, 因為mainCrawler有用到這個function
 def time_in_range(start, end, x):
     """Return true if x is in the range [start, end]"""
     if start <= end:
@@ -123,21 +129,85 @@ def time_in_range(start, end, x):
     else:
         return start <= x or x <= end
 
+# ↓↓↓↓↓↓↓↓↓↓  python repeater test  ↓↓↓↓↓↓↓↓↓↓
+def do_job(num):
+    # threading.Timer(2,do_job,())
+    # 第一个参数: 延迟多长时间执行任务(单位: 秒)
+    # 第二个参数: 要执行的任务, 即函数
+    # 第三个参数: 调用函数的参数(tuple)
+    # global timer
+    num += 1
+    print("do_job times：", num)
+    print("current used thread(s)：{}".format(threading.active_count()))
+    print("\n")
+    if num > 4:
+        return
+    print(datetime.datetime.now().strftime("%H-%m-%d %H:%M:%S"))
+    timer = threading.Timer(5, do_job, (num,))
+    timer.start()
+# ↑↑↑↑↑↑↑↑↑↑  python repeater test  ↑↑↑↑↑↑↑↑↑↑
 
-# def crawler():
-
-#     print("current used thread(s)：{}".format(threading.active_count()))
-#     timezone = 'Asia/Shanghai'
-#     startTime = datetime.time(11, 0, 0)
-#     endTime = datetime.time(20, 15, 0)
-#     curWholeTime = currentTimeGetter(timezone)
-
-#     if (time_in_range(startTime, endTime, curWholeTime)):
-#         timer = threading.Timer(3, crawler, ())
-#         print(curWholeTime)
-#         timer.start()
 
 
+
+def bigIndexCrawler(headless = True):
+
+    url = "https://mis.taifex.com.tw/futures/RegularSession/EquityIndices/FuturesDomestic/"  # 大盤
+    
+    # choose whether headless or not
+    if ( headless ):
+        option = webdriver.ChromeOptions()
+        option.add_argument('--headless')
+        option.add_argument('--disable-notifications')
+        driver = webdriver.Chrome(options = option)
+    else:
+        driver = webdriver.Chrome()
+
+    # get URL
+    driver.get(url)
+
+    time.sleep(2)
+
+    # click confirm button
+    refreshBtn = driver.find_element_by_css_selector("#content > main > div.container > div.approve-wrap > button:nth-child(2)")
+    refreshBtn.click()
+    
+    time.sleep(2)
+
+    # deliver page-source to parse HTML
+    
+    page_source = driver.page_source
+    soup = BeautifulSoup(page_source, 'html.parser')
+    tbody = soup.select_one("table.table.quotes-table.mb-1.sticky-table-horizontal tbody")
+    trs = tbody.select("tr")
+    data = []
+    for tr in trs:
+        tds = tr.select("td")
+        counter = 1
+        tempArray = []
+        designatedColumns = [1, 7, 8, 11, 12, 13]
+
+        for td in tds:
+            
+            if counter in designatedColumns:
+                if counter == 1:
+                    productName = td.select_one("a")
+                    tempArray.append(productName.text)
+                else:
+                    index = td.select_one("span")
+                    tempArray.append(index.text)
+            
+            if counter == 15:
+                data.append(tempArray)
+                counter = 1
+            else:
+                counter += 1
+
+    print(data)
+
+
+    # Close window
+    driver.quit() 
 
 
 
