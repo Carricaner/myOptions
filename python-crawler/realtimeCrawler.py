@@ -10,7 +10,7 @@ crawlerParams = {
     'isheadless': True,
     'headless_argu': ['--headless', '--disable-notifications'],
     'startTime': datetime.time(11, 0, 0),
-    'endTime': datetime.time(12, 0, 0),
+    'endTime': datetime.time(23, 0, 0),
     'curTime': currentTimeGetter('Asia/Shanghai')
 }
 

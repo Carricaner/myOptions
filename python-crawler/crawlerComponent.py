@@ -49,8 +49,11 @@ def mainCrawler(crawlerParams):
         # deliver page-source to parse HTML
         for i in range(2):
             page_source = driver.page_source
-            data = htmlScriptParser(page_source)
-            print(data)
+            listData = htmlScriptParser(page_source)
+
+            #turn 2D list into 2D tuple
+            tupleData = tuple(map(tuple, listData))
+            print(tupleData)
             print()
             time.sleep(5)
             
