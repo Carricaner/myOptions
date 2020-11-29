@@ -11,39 +11,51 @@ db_settings = {
     "charset": "utf8"
 }
 
-try:
+# value(s)
+values = (('may@gmail.com', 'May', 'local', 'may.html'),
+    ('jack@gmail.com', 'Jack', 'fb', 'jack.html'),
+    ('joy@gmail.com', 'Joy', 'local', 'Joy.html'),
+    ('lili@gmail.com', 'Lili', 'fb', 'lili.html'))
 
-    # try connection
-    conn = pymysql.connect(**db_settings)
 
-    # 建立Cursor物件
-    cursor = conn.cursor()
+def updateSQL(values, table, columns, items):
 
-    # command = "SELECT * FROM users"
-    command = "INSERT INTO users (email, name, localorfb, pic) VALUES (%s, %s, %s, %s)"
-    
-    # val = ('may@gmail.com', 'May', 'local', 'may.html')
-    val = (('may@gmail.com', 'May', 'local', 'may.html'),
-        ('jack@gmail.com', 'Jack', 'fb', 'jack.html'),
-        ('joy@gmail.com', 'Joy', 'local', 'Joy.html'),
-        ('lili@gmail.com', 'Lili', 'fb', 'lili.html'))
+    try:
+        # make a connection
+        conn = pymysql.connect(**db_settings)
 
-    # 執行指令
-    # cursor.execute(command, val)
-    rows = cursor.executemany(command, val)
+        # build a cursor
+        cursor = conn.cursor()
 
-    # commit. otherwise, it would fail to alter tables' content
-    conn.commit()
-    print(rows)
-    # 取得所有資料
-    # result = cursor.fetchall()
-    # print(result)
+        # start a transaction
+        conn.begin()
 
-    # close cursor
-    cursor.close()
-    # close connection
-    conn.close()
+        # commands
+        # select = "SELECT * FROM %s" %table
+        deleteall = "DELETE FROM %s" %table
+        insertFirst = "INSERT INTO %s" %table
+        insertMulti = insertFirst + ' ' + columns + ' VALUES ' + items
 
-except:
-    # print(Exception)
-    conn.rollback()
+        # execute command(s)
+        # result = cursor.execute(select)
+        # result = cursor.fetchall()
+        # print(result)
+        cursor.execute(deleteall)
+        rows = cursor.executemany(insertMulti, values)
+        # display how many rows being affected
+        print("(Success) There is(are) %d row(s) being affected." %rows) 
+
+
+        # commit changes
+        conn.commit()
+
+        # close cursor
+        cursor.close()
+
+        # close connection
+        conn.close()
+
+    except:
+
+        print("(Fail) Something went wrong, rolling back changes...")
+        conn.rollback()

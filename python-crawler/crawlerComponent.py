@@ -6,34 +6,37 @@ import datetime
 import threading
 import pytz
 
+from mysql import updateSQL
+
 # sample@
-# crawlerParams = {
+# params = {
 #     'isDay': True,  #False => Night
 #     'isheadless': True,
 #     'headless_argu': ['--headless', '--disable-notifications'],
 #     'startTime': datetime.time(11, 0, 0),
 #     'endTime': datetime.time(21, 0, 0),
-#     'curTime': currentTimeGetter('Asia/Shanghai')
+#     'curTime': currentTimeGetter('Asia/Shanghai'),
+#     'table' : "realtime_opt"
 # }
 
 
-def mainCrawler(crawlerParams):
+def mainCrawler(params):
     
-    start = crawlerParams['startTime']
-    end = crawlerParams['endTime']
-    current = crawlerParams['curTime']
+    start = params['startTime']
+    end = params['endTime']
+    current = params['curTime']
 
     if (time_in_range(start, end, current)):
         # choose day or night
-        if ( crawlerParams['isDay'] ):
+        if ( params['isDay'] ):
             url = "https://mis.taifex.com.tw/futures/RegularSession/EquityIndices/Options/"  # 日盤
         else:
             url = "https://mis.taifex.com.tw/futures/AfterHoursSession/EquityIndices/Options/"  # 夜盤
         
         # choose whether headless or not
-        if ( crawlerParams['isheadless'] ):
+        if ( params['isheadless'] ):
             option = webdriver.ChromeOptions()
-            for item in crawlerParams['headless_argu']:
+            for item in params['headless_argu']:
                 option.add_argument(item)
             driver = webdriver.Chrome(options = option)
         else:
@@ -47,25 +50,26 @@ def mainCrawler(crawlerParams):
         time.sleep(2)
 
         # deliver page-source to parse HTML
-        for i in range(2):
+        for i in range(1):
             page_source = driver.page_source
             listData = htmlScriptParser(page_source)
 
             #turn 2D list into 2D tuple
             tupleData = tuple(map(tuple, listData))
-            print(tupleData)
-            print()
+
+            #update SQL
+            updateSQL(tupleData, params['table'], params['columns'], params['items'])
+            # print(tupleData)
+            # print()
+
             time.sleep(5)
-            
-        # csvUpdatter(data)
-        # print("csv updated!")
 
         # Close window
         driver.quit() 
 
     else:
-        print("Trading time is over... ready to sleep for another term")
-        time.sleep(60*15)
+        print("Trading time is over... sleep for 2 mins")
+        time.sleep(60*2)
 
 
 
@@ -85,9 +89,13 @@ def htmlScriptParser(page_source):
                 tempArray.append(price.text)
                 counter += 1
             else:
-                if ( 4 <= counter <= 12):
+                if (4 <= counter <= 12):
                     divText = td.select_one("a div")
-                    tempArray.append(divText.text)
+                    if(divText.text == "--"):
+                        tempArray.append(None)
+                    else:
+                        tempArray.append(divText.text.replace(",",""))
+                    
                 if (counter == 15):
                     data.append(tempArray)
                     counter = 1
@@ -188,7 +196,7 @@ def bigIndexCrawler(headless = True):
         tds = tr.select("td")
         counter = 1
         tempArray = []
-        designatedColumns = [1, 7, 8, 11, 12, 13]
+        designatedColumns = [1, 2, 7, 8, 11, 12, 13]
 
         for td in tds:
             
@@ -196,6 +204,8 @@ def bigIndexCrawler(headless = True):
                 if counter == 1:
                     productName = td.select_one("a")
                     tempArray.append(productName.text)
+                elif counter == 2:
+                    tempArray.append(td.text)
                 else:
                     index = td.select_one("span")
                     tempArray.append(index.text)
