@@ -3,7 +3,11 @@ import datetime
 import math
 import random
 
-from crawlerComponent import mainCrawler, bigIndexCrawler, time_in_range, currentTimeGetter
+
+from crawler.crawler import realtimeOptCrawler, realtimeBigIndexCrawler
+from crawler.timeManager import currentTimeGetter
+from crawler.test import tuple2
+
 
 optParams = {
     'isDay': True,  #False => Night
@@ -19,13 +23,14 @@ optParams = {
 
 
 # crawl realtime options
-# mainCrawler(optParams)
+# realtimeOptCrawler(optParams)
 
 # crawl realtime bigIndex
-bigIndexCrawler(True)
+realtimeBigIndexCrawler(True)
 
 
-# print(time_in_range(startTime, endTime, xTime))
+# print(tuple2)
+
 
 
 

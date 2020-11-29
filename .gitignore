@@ -15,4 +15,5 @@ debug.log
 
 #__pycache__
 
-/python-crawler/__pycache__
+/crawler/__pycache__
+/crawler/comp/__pycache__
