@@ -11,12 +11,6 @@ db_settings = {
     "charset": "utf8"
 }
 
-# value(s)
-values = (('may@gmail.com', 'May', 'local', 'may.html'),
-    ('jack@gmail.com', 'Jack', 'fb', 'jack.html'),
-    ('joy@gmail.com', 'Joy', 'local', 'Joy.html'),
-    ('lili@gmail.com', 'Lili', 'fb', 'lili.html'))
-
 
 def updateSQL(values, table, columns, items):
 

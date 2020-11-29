@@ -21,12 +21,23 @@ optParams = {
     'items' : '(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
 }
 
+bigIndexParams = {
+    'isDay': True,  #False => Night
+    'isheadless': True,
+    'headless_argu': ['--headless', '--disable-notifications'],
+    'startTime': datetime.time(11, 0, 0),
+    'endTime': datetime.time(23, 0, 0),
+    'curTime': currentTimeGetter('Asia/Shanghai'),
+    'table' : 'realtime_bigindex',
+    'columns' : '(name, status, dealprice, price_var, open, high, low)',
+    'items' : '(%s, %s, %s, %s, %s, %s, %s)'
+}
 
 # crawl realtime options
 # realtimeOptCrawler(optParams)
 
 # crawl realtime bigIndex
-realtimeBigIndexCrawler(True)
+realtimeBigIndexCrawler(bigIndexParams)
 
 
 # print(tuple2)

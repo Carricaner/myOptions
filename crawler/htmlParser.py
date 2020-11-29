@@ -47,12 +47,15 @@ def parser4realtimeBigIndex(page_source):
             if counter in designatedColumns:
                 if counter == 1:
                     productName = td.select_one("a")
-                    tempArray.append(productName.text)
+                    tempArray.append(productName.text.replace("\n","").strip())
                 elif counter == 2:
                     tempArray.append(td.text)
                 else:
-                    index = td.select_one("span")
-                    tempArray.append(index.text)
+                    spanText = td.select_one("span")
+                    if(spanText.text == "--"):
+                        tempArray.append(None)
+                    else:
+                        tempArray.append(spanText.text.replace(",",""))
             
             if counter == 15:
                 data.append(tempArray)
