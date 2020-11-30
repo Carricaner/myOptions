@@ -1,14 +1,17 @@
 from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 from bs4 import BeautifulSoup
 import time
 import datetime
 import threading
 import pytz
+from dateutil.relativedelta import relativedelta
+
 
 # ===== Inner Usage ======
 from .mysql import updateSQL
-from .htmlParser import parser4realtimeOpt, parser4realtimeBigIndex
-from .timeManager import time_in_range, getNowDayOfWeek
+from .htmlParser import parser4realtimeOpt, parser4realtimeBigIndex, parser4staticOptDis
+from .timeManager import time_in_range, currentTimeGetter, getNowDayOfWeek, currentDateGetter
 # ========================
 
 # sample@
@@ -91,6 +94,10 @@ def realtimeOptCrawler(params):
             print("Trading time is over... sleep for 2 mins")
             time.sleep(60*2)
 
+    else: 
+        print("It is weekend! Have a break!")
+        time.sleep(60*30)
+
 
 
 
@@ -158,5 +165,92 @@ def realtimeBigIndexCrawler(params):
         else:
             print("Trading time is over... sleep for 2 mins")
             time.sleep(60*2)
+
+    else: 
+        print("It is weekend! Have a break!")
+        time.sleep(60*30)
+
+
+
+
+
+def staticOptDisCrawler():
+
+    # distinguish day of weeks (0 => Mon; 6 => Sun)
+    isWeekdays = getNowDayOfWeek('Asia/Shanghai') < 5
+
+    # set crawling time
+    startCollectTime = datetime.time(3, 30, 0)
+    endCollectTime =  datetime.time(23, 35, 0)
+    curTime = currentTimeGetter('Asia/Shanghai')
+
+    # current date
+    curYear = currentDateGetter('Asia/Shanghai').year
+    curMonth = currentDateGetter('Asia/Shanghai').month
+    curDay = currentDateGetter('Asia/Shanghai').day
+
+    # next Month the same day
+    dayAfterAMonth = currentDateGetter('Asia/Shanghai') + relativedelta(months=1)
+    nextYear = dayAfterAMonth.year
+    nextMonth = dayAfterAMonth.month
+    nextDay = dayAfterAMonth.day
+
+
+    # url
+    url = "https://www.taifex.com.tw/cht/3/optDailyMarketReport"
+
+    if (isWeekdays and time_in_range(startCollectTime, endCollectTime, curTime)):
+        
+        # use headless mode or not
+        option = webdriver.ChromeOptions()
+        option.add_argument('--headless')
+        option.add_argument('--disable-notifications')
+        driver = webdriver.Chrome(options = option)
+        # driver = webdriver.Chrome()
+
+        # get URL, select desired options and click confirm button
+        driver.get(url)
+        time.sleep(2)
+        dateInput = driver.find_element_by_css_selector("#queryDate")
+        dateInput.clear()
+        dateInput.send_keys("%d/%d/%d" %(curYear, curMonth, curDay))
+
+        tradeTimeSelect = Select(driver.find_element_by_css_selector("#MarketCode"))
+        tradeTimeSelect.select_by_value("0")
+
+        contractSelect = Select(driver.find_element_by_css_selector("#commodity_idt"))
+        contractSelect.select_by_value("TXO")
+
+        queryBtn = driver.find_element_by_css_selector("#button")
+        queryBtn.click()
+
+        time.sleep(6)
+
+        
+        # deliver page-source to parse HTML
+        page_source = driver.page_source
+        listData = parser4staticOptDis(page_source, curYear, curMonth, curDay, nextYear, nextMonth)
+        
+        #turn 2D list into 2D tuple
+        tupleData = tuple(map(tuple, listData))
+        # print(tupleData)
+
+        #update SQL
+        updateSQL(tupleData, 
+            "ana_optdis", 
+            '(date, contract, duetime, target, cp, finalprice, dealprice, pricevar, amountinday, amountleft)', 
+            '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        )
+
+        time.sleep(5)
+
+        # Close window
+        driver.quit()
+
+    else:
+        print("Static crawler is pending ... \nWait for %d:%d on weekdays to start" %(startCollectTime.hour, startCollectTime.minute))
+        time.sleep(60*15)
+
+
 
 

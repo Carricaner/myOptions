@@ -14,6 +14,14 @@ def currentTimeGetter(timezone):
     return datetime.time(curHr, curMin, curSec)    
 
 
+def currentDateGetter(timezone):
+    # Choose Shanghai's time zone
+    tz = pytz.timezone(timezone)
+    today = datetime.datetime.now(tz)
+    return today  
+
+
+
 def getNowDayOfWeek(timezone):
     tz = pytz.timezone(timezone)
     today = datetime.datetime.now(tz)

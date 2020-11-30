@@ -4,9 +4,9 @@ import math
 import random
 
 
-from crawler.crawler import realtimeOptCrawler, realtimeBigIndexCrawler
-from crawler.timeManager import currentTimeGetter, getNowDayOfWeek
-from crawler.test import tuple2
+from crawler.crawler import realtimeOptCrawler, realtimeBigIndexCrawler, staticOptDisCrawler
+from crawler.timeManager import currentTimeGetter, getNowDayOfWeek, currentDateGetter
+
 
 
 optParams = {
@@ -40,17 +40,12 @@ bigIndexParams = {
 }
 
 # crawl realtime options
-realtimeOptCrawler(optParams)
+# realtimeOptCrawler(optParams)
 
 # crawl realtime bigIndex
 # realtimeBigIndexCrawler(bigIndexParams)
 
-
-# print(tuple2)
-
-# print(getNowDayOfWeek('Asia/Shanghai'))
-# isweekdays = getNowDayOfWeek('Asia/Shanghai') < 5
-# lastTradeHours = getNowDayOfWeek('Asia/Shanghai') == 5 and 
-# print(isweekdays)
+# crawl static options distribution
+staticOptDisCrawler()
 
 
