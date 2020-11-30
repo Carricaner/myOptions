@@ -4,13 +4,21 @@ import threading
 import pytz
 
 
+
 def currentTimeGetter(timezone):
-    # Choose Changhai's time zone
+    # Choose Shanghai's time zone
     tz = pytz.timezone(timezone)
     curHr = datetime.datetime.now(tz).hour
     curMin = datetime.datetime.now(tz).minute
     curSec = datetime.datetime.now(tz).second
     return datetime.time(curHr, curMin, curSec)    
+
+
+def getNowDayOfWeek(timezone):
+    tz = pytz.timezone(timezone)
+    today = datetime.datetime.now(tz)
+    return today.date().weekday()
+
 
 
 # 搬家的時候要注意, 因為mainCrawler有用到這個function

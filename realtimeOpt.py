@@ -5,7 +5,7 @@ import random
 
 
 from crawler.crawler import realtimeOptCrawler, realtimeBigIndexCrawler
-from crawler.timeManager import currentTimeGetter
+from crawler.timeManager import currentTimeGetter, getNowDayOfWeek
 from crawler.test import tuple2
 
 
@@ -13,9 +13,12 @@ optParams = {
     'isDay': True,  #False => Night
     'isheadless': True,
     'headless_argu': ['--headless', '--disable-notifications'],
-    'startTime': datetime.time(11, 0, 0),
-    'endTime': datetime.time(23, 0, 0),
+
+    'startTime': datetime.time(9, 0, 0),
+    'endTime': datetime.time(13, 30, 0),
     'curTime': currentTimeGetter('Asia/Shanghai'),
+    'dayOfWeek' : getNowDayOfWeek('Asia/Shanghai'),
+
     'table' : 'realtime_opt',
     'columns' : '(call_var, call_deal, call_sell, call_buy, target, put_buy, put_sell, put_deal, put_var)',
     'items' : '(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
@@ -25,23 +28,29 @@ bigIndexParams = {
     'isDay': True,  #False => Night
     'isheadless': True,
     'headless_argu': ['--headless', '--disable-notifications'],
+
     'startTime': datetime.time(11, 0, 0),
     'endTime': datetime.time(23, 0, 0),
     'curTime': currentTimeGetter('Asia/Shanghai'),
+    'dayOfWeek' : getNowDayOfWeek('Asia/Shanghai'),
+
     'table' : 'realtime_bigindex',
     'columns' : '(name, status, dealprice, price_var, open, high, low)',
     'items' : '(%s, %s, %s, %s, %s, %s, %s)'
 }
 
 # crawl realtime options
-# realtimeOptCrawler(optParams)
+realtimeOptCrawler(optParams)
 
 # crawl realtime bigIndex
-realtimeBigIndexCrawler(bigIndexParams)
+# realtimeBigIndexCrawler(bigIndexParams)
 
 
 # print(tuple2)
 
-
+# print(getNowDayOfWeek('Asia/Shanghai'))
+# isweekdays = getNowDayOfWeek('Asia/Shanghai') < 5
+# lastTradeHours = getNowDayOfWeek('Asia/Shanghai') == 5 and 
+# print(isweekdays)
 
 
