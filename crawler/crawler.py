@@ -72,7 +72,7 @@ def realtimeOptCrawler(params):
             confirmBtn.click()
             time.sleep(2)
 
-            for i in range(1):
+            for i in range(10):
                 # deliver page-source to parse HTML
                 page_source = driver.page_source
                 listData = parser4realtimeOpt(page_source)
@@ -85,7 +85,7 @@ def realtimeOptCrawler(params):
                 # print(tupleData)
                 # print()
 
-                time.sleep(5)
+                time.sleep(6)
 
             # Close window
             driver.quit() 
@@ -144,7 +144,7 @@ def realtimeBigIndexCrawler(params):
             time.sleep(2)
 
 
-            for i in range(1):
+            for i in range(10):
                 # deliver page-source to parse HTML
                 page_source = driver.page_source
                 listData = parser4realtimeBigIndex(page_source)
@@ -157,7 +157,7 @@ def realtimeBigIndexCrawler(params):
                 # print(tupleData)
                 # print()
 
-                time.sleep(5)
+                time.sleep(6)
 
             # Close window
             driver.quit() 

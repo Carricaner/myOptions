@@ -15,7 +15,7 @@ optParams = {
     'headless_argu': ['--headless', '--disable-notifications'],
 
     'startTime': datetime.time(9, 0, 0),
-    'endTime': datetime.time(23, 30, 0),
+    'endTime': datetime.time(13, 30, 0),
     'curTime': currentTimeGetter('Asia/Shanghai'),
     'dayOfWeek' : getNowDayOfWeek('Asia/Shanghai'),
 
@@ -29,8 +29,8 @@ bigIndexParams = {
     'isheadless': True,
     'headless_argu': ['--headless', '--disable-notifications'],
 
-    'startTime': datetime.time(9, 0, 0),
-    'endTime': datetime.time(13, 30, 0),
+    'startTime': datetime.time(11, 0, 0),
+    'endTime': datetime.time(23, 0, 0),
     'curTime': currentTimeGetter('Asia/Shanghai'),
     'dayOfWeek' : getNowDayOfWeek('Asia/Shanghai'),
 
@@ -39,8 +39,8 @@ bigIndexParams = {
     'items' : '(%s, %s, %s, %s, %s, %s, %s)'
 }
 
-# crawl realtime options
-realtimeOptCrawler(optParams)
+# crawl realtime bigIndex
+realtimeBigIndexCrawler(bigIndexParams)
 
 # crawl static options distribution
 # staticOptDisCrawler()

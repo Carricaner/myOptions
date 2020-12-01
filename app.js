@@ -169,30 +169,82 @@ app.get("/getPromptOptData", (req, res) => {
     })
 })
 
+// var servIo = io.listen(server);
+// servIo.on('connection', function (socket) {
+//     console.log("Somebody is here! Welcome!")
+//     setInterval( function () {
+//         socket.emit('people', { 
+//             'second': new Date().getSeconds(), 
+//             'people': 15,
+//             'time': 2
+//         });
+//     }, 1000);
+
+//     // socket.emit('people', { 'second': new Date().getSeconds(), 'people': peopleNumber });
+
+//     socket.on('chat message', (msg) => {
+//         console.log('message: ' + msg);
+//       });
+
+//     socket.on('disconnect', () => {
+//         console.log('user disconnected');
+// 	});
+	
+// });
+
+// var servIo = io.listen(server);
+// servIo.on('connection', function (socket) {
+// 	setInterval( function () {
+// 		        socket.emit('data', { 
+// 		            'second': new Date().getSeconds(), 
+// 		            'people': 15,
+// 		            'time': 2
+// 		        });
+// 		    }, 3000);
+
+// })
+
+
+
+
+
 
 app.get("/getPromptBigIndexData", (req, res) => {
 
-    pool.getConnection((err, connection) => {
-        if (err) throw err;
+	pool.getConnection((err, connection) => {
+		if (err) throw err;
 
-        connection.beginTransaction((err) => {
-            if (err) throw err;
+		connection.beginTransaction((err) => {
+			if (err) throw err;
 
-            connection.query('SELECT * FROM realtime_bigindex LOCK IN SHARE MODE', (err, result) => {
-                if (err) {return connection.rollback(() => {throw err})}
+			connection.query('SELECT * FROM realtime_bigindex LOCK IN SHARE MODE', (err, result) => {
+				if (err) {return connection.rollback(() => {throw err})}
 
-                connection.commit((err) => {
-                    if (err) {return connection.rollback(() => {throw err})}
-                    
-                    console.log("Success!")
-                    res.send(result)
-                })
+				connection.commit((err) => {
+					if (err) {return connection.rollback(() => {throw err})}
+					
+					console.log("Success!")
+					let data = {
+						bigIndex: {
+							name: result[0].name,
+							dealprice: Number(result[0].dealprice)
+						},
+						futureIndex: {
+							name: result[1].name,
+							dealprice: Number(result[1].dealprice)
+						},
+					}
 
-            })
+					res.send(data)
+					
+				})
 
-        })
+			})
 
-    })
+		})
+
+	})
+	
 })
 
 

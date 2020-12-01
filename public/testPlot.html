@@ -5,15 +5,142 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>testPlot</title>
     <style media="screen">
-        #chart {width: 40%; height: 50%}
+        #chart {width: 80%; height: 50%}
+        #chart2 {width: 80%; height: 50%}
     </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
     <div id="chart"></div>
-
+    <div id="chart2"></div>
 
     <script>
+        // var socket = io.connect();
+
+        // let xArray = [];
+        // let yArray = [];
+
+        // socket.on('people', function (people) {
+
+        // xArray.push(people.second);
+        // yArray.push(people.people);
+
+        // // console.log(xArray)
+        // // console.log(yArray)
+
+        // var trace = {
+        //     x: xArray,
+        //     y: yArray,
+        //     type: 'scatter'
+        // };
+        // var data = [trace]
+        // Plotly.react('chart', data)
+
+        // });
+
+        let xBigIndex = []
+        let yBigIndex = []
         
+
+
+        setInterval(() => {
+
+            fetch("/getPromptBigIndexData")
+            .then(response => {
+                let message = response.json();
+                return message;
+            })
+            .then(result => {
+
+                let bigIndexDealPrice = result.bigIndex.dealprice
+
+                console.log(bigIndexDealPrice)
+
+                let date = new Date()
+                let hour = date.getHours()
+                let minute = date.getMinutes()
+                let second = date.getSeconds()
+                
+                if (hour.toString().length < 2) {
+                    hour = '0' + hour.toString()
+                }
+                if (minute.toString().length < 2) {
+                    minute = '0' + minute.toString()
+                }
+                if (second.toString().length < 2) {
+                    second = '0' + second.toString()
+                }   
+            
+                string = `${date.getYear()+1900}-${date.getMonth()}-0${date.getDate()} ${hour}:${minute}:${second}`
+
+                console.log(string)
+
+                xBigIndex.push(string)
+                yBigIndex.push(bigIndexDealPrice)
+
+                console.log(xBigIndex)
+                console.log(yBigIndex)
+
+                trace = {
+                    x: xBigIndex,
+                    y: yBigIndex,
+                    type: 'line'
+                };
+                layout = {
+                    title: '加權指數',
+                    // xaxis: {
+                    //     range: ['2020-12-01 09:00:00', '2020-12-01 13:30:00']
+                    // }
+                }
+
+                data = [trace]
+                Plotly.react('chart', data, layout)
+
+
+            })
+            
+
+        }, 8000)
+
+        var trace = {
+            x: yBigIndex,
+            y: yBigIndex,
+            type: 'line'
+        };
+
+        var data = [trace]
+
+        var layout = {
+            title: '加權指數',
+            xaxis: {
+                range: ['2020-12-01 09:00:00', '2020-12-01 13:30:00']
+            }
+        }
+
+        Plotly.react('chart', data, layout)
+
+        let timeData = ["2020-12-01 12:00:00", "2020-12-01 12:01:00", "2020-12-01 12:02:00"]
+        let yData2 = [10, 20, 30]
+
+        var trace2 = {
+            x: timeData,
+            y: yData2,
+            type: 'scatter'
+        }
+
+        var data2 = [trace2]
+
+        Plotly.react('chart2', data2)
+
+
+
+
+
+
+
+
     </script>
 </body>
 </html>
