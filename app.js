@@ -169,6 +169,9 @@ app.get("/getPromptOptData", (req, res) => {
     })
 })
 
+
+
+
 // var servIo = io.listen(server);
 // servIo.on('connection', function (socket) {
 //     console.log("Somebody is here! Welcome!")
@@ -199,12 +202,32 @@ app.get("/getPromptOptData", (req, res) => {
 // 		            'second': new Date().getSeconds(), 
 // 		            'people': 15,
 // 		            'time': 2
-// 		        });
-// 		    }, 3000);
+// 		        });./
 
 // })
 
+app.get("/testAPI", (req, res) => {
 
+
+	// Wait to use Redis
+
+	// pool.query('SELECT * FROM realtime_bigindex LOCK IN SHARE MODE', (err, result) => {
+	// 	console.log("Success!")
+	// 				let data = {
+	// 					bigIndex: {
+	// 						name: result[0].name,
+	// 						dealprice: Number(result[0].dealprice)
+	// 					},
+	// 					futureIndex: {
+	// 						name: result[1].name,
+	// 						dealprice: Number(result[1].dealprice)
+	// 					},
+	// 				}
+
+	// 				res.send(data)
+		
+	// })
+})
 
 
 

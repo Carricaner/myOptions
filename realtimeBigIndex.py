@@ -2,7 +2,7 @@ import time
 import datetime
 import math
 import random
-
+import redis
 
 from crawler.crawler import realtimeOptCrawler, realtimeBigIndexCrawler, staticOptDisCrawler
 from crawler.timeManager import currentTimeGetter, getNowDayOfWeek, currentDateGetter
@@ -40,9 +40,14 @@ bigIndexParams = {
 }
 
 # crawl realtime bigIndex
-realtimeBigIndexCrawler(bigIndexParams)
+# realtimeBigIndexCrawler(bigIndexParams)
 
 # crawl static options distribution
 # staticOptDisCrawler()
 
 
+r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+
+r.set("test", "a4w84d8wad")
+
+print(r.get("test"))
