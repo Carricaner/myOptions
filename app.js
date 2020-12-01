@@ -31,6 +31,29 @@ app.use(cors());
 
 
 
+//=====================<< Redis >>=====================
+const redis = require("redis");
+const client = redis.createClient();
+
+let redisGears = {};
+redisGears.turnOn = () => {
+	client.on("connect", () => {
+		console.log("<<<--- Redis: client connected --->>>");
+	});
+};
+// redisGears.setAsync = promisify(client.set).bind(client);
+// redisGears.getAsync = promisify(client.get).bind(client);
+redisGears.client = client;
+
+redisGears.turnOn();
+
+redisGears.client.get("realtimeBigIndex", (err, value) => {
+	console.log(JSON.parse(value))
+})
+
+
+
+
 //=====================<< MySQL >>=====================
 const mysql = require("mysql");
 

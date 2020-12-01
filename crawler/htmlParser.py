@@ -5,65 +5,85 @@ def parser4realtimeOpt(page_source):
     soup = BeautifulSoup(page_source, 'html.parser')
     tbody = soup.select_one("table.sticky-table-horizontal-2 tbody")
     trs = tbody.select("tr")
+    dicArray = []
     data = []
     for tr in trs:
         tds = tr.select("td")
         counter = 1
         tempArray = []
+        container = {}
+        columnsArray = ['call_var', 'call_deal', 'call_sell', 'call_buy', 'target', 'put_buy', 'put_sell', 'put_deal', 'put_var']
         for td in tds:
             if (counter == 8):
                 price = td.select_one("div")
                 tempArray.append(price.text)
+                container[columnsArray[counter-4]] = price.text
                 counter += 1
             else:
                 if (4 <= counter <= 12):
                     divText = td.select_one("a div")
                     if(divText.text == "--"):
                         tempArray.append(None)
+                        container[columnsArray[counter-4]] = None
                     else:
                         tempArray.append(divText.text.replace(",",""))
+                        container[columnsArray[counter-4]] = float(divText.text.replace(",",""))
                     
                 if (counter == 15):
                     data.append(tempArray)
+                    dicArray.append(container)
                     counter = 1
                 else:
                     counter += 1
-    return data
+    return dicArray
 
 
 def parser4realtimeBigIndex(page_source):
     soup = BeautifulSoup(page_source, 'html.parser')
     tbody = soup.select_one("table.table.quotes-table.mb-1.sticky-table-horizontal tbody")
     trs = tbody.select("tr")
+    dicArray = []
     data = []
     for tr in trs:
         tds = tr.select("td")
         counter = 1
         tempArray = []
+        container = {}
+        columnsArray = ['name', 'status', 'dealprice', 'price_var', 'open', 'high', 'low']
         designatedColumns = [1, 2, 7, 8, 11, 12, 13]
-
+        columnsCounter = 0
         for td in tds:
+            
             
             if counter in designatedColumns:
                 if counter == 1:
                     productName = td.select_one("a")
                     tempArray.append(productName.text.replace("\n","").strip())
+                    container[columnsArray[columnsCounter]] = productName.text.replace("\n","").strip()
                 elif counter == 2:
                     tempArray.append(td.text)
+                    if (td.text == ""):
+                        container[columnsArray[columnsCounter]] = None
+                    else:
+                        container[columnsArray[columnsCounter]] = td.text
                 else:
                     spanText = td.select_one("span")
                     if(spanText.text == "--"):
                         tempArray.append(None)
+                        container[columnsArray[columnsCounter]] = None
                     else:
                         tempArray.append(spanText.text.replace(",",""))
+                        container[columnsArray[columnsCounter]] = spanText.text.replace(",","")
+                columnsCounter += 1
             
             if counter == 15:
                 data.append(tempArray)
+                dicArray.append(container)
                 counter = 1
             else:
                 counter += 1
 
-    return data
+    return dicArray
 
 
 def parser4staticOptDis(page_source, curYear, curMonth, curDay, nextYear, nextMonth):

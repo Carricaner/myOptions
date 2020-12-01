@@ -2,8 +2,9 @@ import time
 import datetime
 import threading
 import pytz
+from dateutil.relativedelta import relativedelta
 
-
+    
 
 def currentTimeGetter(timezone):
     # Choose Shanghai's time zone
@@ -21,15 +22,74 @@ def currentDateGetter(timezone):
     return today  
 
 
-
 def getNowDayOfWeek(timezone):
     tz = pytz.timezone(timezone)
     today = datetime.datetime.now(tz)
     return today.date().weekday()
 
 
+def getDateTimeProd(timezone):
+    
+    # add 0 if needed
+    def addZeroIfNeeded(factor):
+        if (len(str(factor)) < 2):
+            return "0%s" %factor
+        else:
+            return str(factor)
 
-# 搬家的時候要注意, 因為mainCrawler有用到這個function
+    # current params
+    curYear = currentDateGetter(timezone).year
+    curMonth = currentDateGetter(timezone).month
+    curDay = currentDateGetter(timezone).day
+    curHour = currentTimeGetter(timezone).hour
+    curMinute = currentTimeGetter(timezone).minute
+    curSecond = currentTimeGetter(timezone).second
+    
+    curDateString = "%s-%s-%s" %(curYear, addZeroIfNeeded(curMonth), addZeroIfNeeded(curDay))
+    curTimeString = "%s:%s:%s" %(addZeroIfNeeded(curHour), addZeroIfNeeded(curMinute), addZeroIfNeeded(curSecond))
+    # print(curYear, curMonth, curDay, curHour, curMinute, curSecond)
+
+    # nextmonth params
+    dayAfterAMonth = currentDateGetter(timezone) + relativedelta(months=1)
+    nextYear = dayAfterAMonth.year
+    nextMonth = dayAfterAMonth.month
+    nextDay = dayAfterAMonth.day
+    nextHour = dayAfterAMonth.hour
+    nextMinute = dayAfterAMonth.minute
+    nextSecond = dayAfterAMonth.second
+
+    nextDateString = "%s-%s-%s" %(nextYear, addZeroIfNeeded(nextMonth), addZeroIfNeeded(nextDay))
+    nextTimeString = "%s:%s:%s" %(addZeroIfNeeded(nextHour), addZeroIfNeeded(nextMinute), addZeroIfNeeded(nextSecond))
+    # print(nextYear, nextMonth, nextDay, nextHour, nextMinute, nextSecond)
+
+
+    # 當月1號禮拜幾
+    firstDayOfMonthInAWeek = datetime.datetime(curYear, curMonth, 1).date().weekday()
+
+    # print(firstDayOfMonthInAWeek)
+
+    if (firstDayOfMonthInAWeek < 3):
+        dealDateOfTheMonth = 18 - firstDayOfMonthInAWeek - 1
+    elif(firstDayOfMonthInAWeek >= 3):
+        dealDateOfTheMonth = 25 - firstDayOfMonthInAWeek - 1
+
+    # print(dealDateOfTheMonth)
+
+    # 過了結算日的下午兩點
+    isAfterDealDayTradeHours = curDay == dealDateOfTheMonth and curHour > 14
+    isTheDaysAfterDealDay = curDay > dealDateOfTheMonth
+
+    # print(isAfterDealDayTradeHours)
+    # print(isTheDaysAfterDealDay)
+    # print(isAfterDealDayTradeHours or isTheDaysAfterDealDay)
+
+    if (isAfterDealDayTradeHours or isTheDaysAfterDealDay):
+        return "%s%s" %(nextYear, addZeroIfNeeded(nextMonth)), curDateString, curTimeString
+    else:
+        return "%s%s" %(curYear, addZeroIfNeeded(curMonth)), curDateString, curTimeString
+
+
+
 def time_in_range(start, end, x):
     """Return true if x is in the range [start, end]"""
     if start <= end:
@@ -37,21 +97,3 @@ def time_in_range(start, end, x):
     else:
         return start <= x or x <= end
 
-
-# ↓↓↓↓↓↓↓↓↓↓  python repeater test  ↓↓↓↓↓↓↓↓↓↓
-def do_job(num):
-    # threading.Timer(2,do_job,())
-    # 第一个参数: 延迟多长时间执行任务(单位: 秒)
-    # 第二个参数: 要执行的任务, 即函数
-    # 第三个参数: 调用函数的参数(tuple)
-    # global timer
-    num += 1
-    print("do_job times：", num)
-    print("current used thread(s)：{}".format(threading.active_count()))
-    print("\n")
-    if num > 4:
-        return
-    print(datetime.datetime.now().strftime("%H-%m-%d %H:%M:%S"))
-    timer = threading.Timer(5, do_job, (num,))
-    timer.start()
-# ↑↑↑↑↑↑↑↑↑↑  python repeater test  ↑↑↑↑↑↑↑↑↑↑

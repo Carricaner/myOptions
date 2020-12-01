@@ -6,25 +6,37 @@ import datetime
 import threading
 import pytz
 from dateutil.relativedelta import relativedelta
+import redis
+import json
 
 
 # ===== Inner Usage ======
 from .mysql import updateSQL
 from .htmlParser import parser4realtimeOpt, parser4realtimeBigIndex, parser4staticOptDis
-from .timeManager import time_in_range, currentTimeGetter, getNowDayOfWeek, currentDateGetter
+from .timeManager import time_in_range, currentTimeGetter, getNowDayOfWeek, currentDateGetter, getDateTimeProd
+# ===== Redis Setting ======
+cacheRedis = redis.Redis(host='localhost', port=6379, decode_responses=True)
 # ========================
 
-# sample@
+# sample @@@
+# basicParams = {
+#     'dayBeginTime' : datetime.time(9, 0, 0),
+#     'dayEndTime' : datetime.time(13, 30, 0),
+#     'isDay' : time_in_range(basicParams['dayBeginTime'], basicParams['dayEndTime'], basicParams['currentTime']),
+#     'nightBeginTime' : datetime.time(15, 0, 0),
+#     'nightEndTime' : datetime.time(5, 0, 0),
+#     'isNight' : time_in_range(basicParams['nightBeginTime'], basicParams['nightEndTime'], basicParams['currentTime']),
+#     'currentTime' : currentTimeGetter('Asia/Shanghai'),
+#     'dayOfWeek' : getNowDayOfWeek('Asia/Shanghai'),  # 0 to 6 represents days in a week respectively
+# }
+
 # optParams = {
-#     'isDay': True,  #False => Night
+#     'isDay': basicParams['isDay'],
+#     'isNight': basicParams['isNight'],
 #     'isheadless': True,
 #     'headless_argu': ['--headless', '--disable-notifications'],
-
-#     'startTime': datetime.time(9, 0, 0),
-#     'endTime': datetime.time(13, 30, 0),
-#     'curTime': currentTimeGetter('Asia/Shanghai'),
-#     'dayOfWeek' : getNowDayOfWeek('Asia/Shanghai'),
-
+#     'dayOfWeek' : basicParams['dayOfWeek'],
+#     # If there is a need to record data into SQL, below is needed:
 #     'table' : 'realtime_opt',
 #     'columns' : '(call_var, call_deal, call_sell, call_buy, target, put_buy, put_sell, put_deal, put_var)',
 #     'items' : '(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
@@ -32,16 +44,12 @@ from .timeManager import time_in_range, currentTimeGetter, getNowDayOfWeek, curr
 
 
 def realtimeOptCrawler(params):
-    
-    start = params['startTime']
-    end = params['endTime']
-    current = params['curTime']
 
     # choose day or night
     if (params['isDay']):
         # 選擇權日盤
         url = "https://mis.taifex.com.tw/futures/RegularSession/EquityIndices/Options/"  
-    else:
+    elif (params['isNight']):
         # 選擇權夜盤
         url = "https://mis.taifex.com.tw/futures/AfterHoursSession/EquityIndices/Options/"
 
@@ -49,18 +57,19 @@ def realtimeOptCrawler(params):
     isWeekdays = params['dayOfWeek'] < 5
 
     # last trading hours on Saturday
-    isLastTradeHours = (params['dayOfWeek'] == 5) and time_in_range(start, end, current)
+    isLastTradeHours = (params['dayOfWeek'] == 5) and params['isNight']
     
-    # 判斷開盤時間: 平日 or 禮拜六最後交易時段
+    # 判斷開盤日期: 平日 or 禮拜六最後交易時段
     if (isWeekdays or isLastTradeHours):
 
-        if (time_in_range(start, end, current)):
+        # 判斷開盤時間
+        if (params['isDay'] or params['isNight']):
             
             # choose whether headless or not
             if ( params['isheadless'] ):
                 option = webdriver.ChromeOptions()
-                for item in params['headless_argu']:
-                    option.add_argument(item)
+                option.add_argument('--headless')
+                option.add_argument('--disable-notifications')
                 driver = webdriver.Chrome(options = option)
             else:
                 driver = webdriver.Chrome()
@@ -71,19 +80,23 @@ def realtimeOptCrawler(params):
             confirmBtn = driver.find_element_by_css_selector("#content > main > div.container > div.approve-wrap > button:nth-child(2)")
             confirmBtn.click()
             time.sleep(2)
+            productSelect = Select(driver.find_element_by_css_selector("#content > main > div.container > div.row.no-gutters.pb-2 > div.col-12.col-md > form > div:nth-child(2) > div > select"))
+            productSelect.select_by_value(getDateTimeProd('Asia/Shanghai')[0])
+            time.sleep(5)
 
-            for i in range(10):
+            for i in range(params['crawlHTMLTimes']):
                 # deliver page-source to parse HTML
                 page_source = driver.page_source
-                listData = parser4realtimeOpt(page_source)
-
-                #turn 2D list into 2D tuple
-                tupleData = tuple(map(tuple, listData))
-
-                #update SQL
-                updateSQL(tupleData, params['table'], params['columns'], params['items'])
-                # print(tupleData)
-                # print()
+                data = parser4realtimeOpt(page_source)
+                updateData = {
+                    "date" : getDateTimeProd('Asia/Shanghai')[1],
+                    "time" : getDateTimeProd('Asia/Shanghai')[2],
+                    "product": getDateTimeProd('Asia/Shanghai')[0],
+                    "data" : data,
+                }
+                # update Redis
+                cacheRedis.set("realtimeOpt", json.dumps(updateData))
+                print("<%s %s> Redis is updated." %(getDateTimeProd('Asia/Shanghai')[1], getDateTimeProd('Asia/Shanghai')[2]))
 
                 time.sleep(6)
 
@@ -103,15 +116,12 @@ def realtimeOptCrawler(params):
 
 def realtimeBigIndexCrawler(params):
     
-    start = params['startTime']
-    end = params['endTime']
-    current = params['curTime']
 
     # choose day or night
     if (params['isDay']):
         # 大盤日盤
         url = "https://mis.taifex.com.tw/futures/RegularSession/EquityIndices/FuturesDomestic/"  
-    else:
+    elif (params['isNight']):
         #台指期全(夜盤)
         url = "https://mis.taifex.com.tw/futures/AfterHoursSession/EquityIndices/FuturesDomestic/" 
 
@@ -120,18 +130,19 @@ def realtimeBigIndexCrawler(params):
     isWeekdays = params['dayOfWeek'] < 5
 
     # last trading hours on Saturday
-    isLastTradeHours = (params['dayOfWeek'] == 5) and time_in_range(start, end, current)
+    isLastTradeHours = (params['dayOfWeek'] == 5) and params['isNight']
     
-    # 判斷開盤時間: 平日 or 禮拜六最後交易時段
+    # 判斷開盤日期: 平日 or 禮拜六最後交易時段
     if (isWeekdays or isLastTradeHours):
 
-        if (time_in_range(start, end, current)):
+        # 判斷開盤時間
+        if (params['isDay'] or params['isNight']):
 
             # choose whether headless or not
             if ( params['isheadless'] ):
                 option = webdriver.ChromeOptions()
-                for item in params['headless_argu']:
-                    option.add_argument(item)
+                option.add_argument('--headless')
+                option.add_argument('--disable-notifications')
                 driver = webdriver.Chrome(options = option)
             else:
                 driver = webdriver.Chrome()
@@ -142,20 +153,22 @@ def realtimeBigIndexCrawler(params):
             refreshBtn = driver.find_element_by_css_selector("#content > main > div.container > div.approve-wrap > button:nth-child(2)")
             refreshBtn.click()
             time.sleep(2)
+            productSelect = Select(driver.find_element_by_css_selector("#content > main > div.container > div.row.no-gutters.pb-2 > div.col-12.col-md > form > div:nth-child(1) > div > select"))
+            productSelect.select_by_value("TXF")
+            time.sleep(5)
 
-
-            for i in range(10):
+            for i in range(params['crawlHTMLTimes']):
                 # deliver page-source to parse HTML
                 page_source = driver.page_source
-                listData = parser4realtimeBigIndex(page_source)
-
-                #turn 2D list into 2D tuple
-                tupleData = tuple(map(tuple, listData))
-
-                #update SQL
-                updateSQL(tupleData, params['table'], params['columns'], params['items'])
-                # print(tupleData)
-                # print()
+                data = parser4realtimeBigIndex(page_source)
+                updateData = {
+                    "date" : getDateTimeProd('Asia/Shanghai')[1],
+                    "time" : getDateTimeProd('Asia/Shanghai')[2],
+                    "data" : data,
+                }
+                # update Redis
+                cacheRedis.set("realtimeBigIndex", json.dumps(updateData))
+                print("<%s %s> Redis is updated." %(getDateTimeProd('Asia/Shanghai')[1], getDateTimeProd('Asia/Shanghai')[2]))
 
                 time.sleep(6)
 
