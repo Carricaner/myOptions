@@ -1,5 +1,6 @@
 import datetime
 from crawler.comp.comp import basicParams
+import datetime
 from crawler.crawler import staticBigIndexCrawler
 
 params = {

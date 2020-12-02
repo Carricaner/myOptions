@@ -8,7 +8,7 @@
 fetchTAIEX_Darren_Version.py
 
 # csv file
-realtimeData.csv
+*.csv
 
 # debug.log
 debug.log

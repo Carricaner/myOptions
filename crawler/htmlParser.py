@@ -88,6 +88,13 @@ def parser4realtimeBigIndex(page_source):
 
 def parser4staticOptDis(page_source, curYear, curMonth, curDay, nextYear, nextMonth):
         
+    # add 0 if needed
+    def addZeroIfNeeded(factor):
+        if (len(str(factor)) < 2):
+            return "0%s" %factor
+        else:
+            return str(factor)
+
     soup = BeautifulSoup(page_source, 'html.parser')
     tbody = soup.select_one("#printhere > table > tbody > tr:nth-child(2) > td > table.table_f > tbody")
     trs = tbody.select("tr")
@@ -103,7 +110,7 @@ def parser4staticOptDis(page_source, curYear, curMonth, curDay, nextYear, nextMo
 
         if (trCounter not in notCrawlColumns):          
             twoConsecutiveMonthProduct = ["%s%s" %(curYear, curMonth), "%s%s" %(nextYear, nextMonth)]
-            tempArray = ["%d%d%d" %(curYear, curMonth, curDay)]
+            tempArray = ["%s%s%s" %(curYear, addZeroIfNeeded(curMonth), addZeroIfNeeded(curDay))]
             designatedColumns = [1, 2, 3, 4, 8, 9, 10, 14, 15]
             tds = tr.select("td")
 

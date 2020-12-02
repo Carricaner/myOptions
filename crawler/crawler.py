@@ -182,14 +182,19 @@ def realtimeBigIndexCrawler(params):
         time.sleep(60*30)
 
 
-def staticOptDisCrawler():
+def staticOptDisCrawler(params):
+
+    # add 0 if needed
+    def addZeroIfNeeded(factor):
+        if (len(str(factor)) < 2):
+            return "0%s" %factor
+        else:
+            return str(factor)
 
     # distinguish day of weeks (0 => Mon; 6 => Sun)
     isWeekdays = getNowDayOfWeek('Asia/Shanghai') < 5
 
-    # set crawling time
-    startCollectTime = datetime.time(16, 30, 0)
-    endCollectTime =  datetime.time(16, 40, 0)
+    # current time
     curTime = currentTimeGetter('Asia/Shanghai')
 
     # current date
@@ -207,68 +212,71 @@ def staticOptDisCrawler():
     # url
     url = "https://www.taifex.com.tw/cht/3/optDailyMarketReport"
 
-    if (isWeekdays and time_in_range(startCollectTime, endCollectTime, curTime)):
+    if (isWeekdays and time_in_range(params['startCollectTime'], params['endCollectTime'], curTime)):
         
-        # use headless mode or not
-        option = webdriver.ChromeOptions()
-        option.add_argument('--headless')
-        option.add_argument('--disable-notifications')
-        driver = webdriver.Chrome(options = option)
-        # driver = webdriver.Chrome()
+        # choose whether headless or not
+        if ( params['isheadless'] ):
+            option = webdriver.ChromeOptions()
+            option.add_argument('--headless')
+            option.add_argument('--disable-notifications')
+            driver = webdriver.Chrome(options = option)
+        else:
+            driver = webdriver.Chrome()
 
         # get URL, select desired options and click confirm button
         driver.get(url)
         time.sleep(2)
         dateInput = driver.find_element_by_css_selector("#queryDate")
         dateInput.clear()
-        dateInput.send_keys("%d/%d/%d" %(curYear, curMonth, curDay))
+        dateInput.send_keys("%s/%s/%s" %(curYear, addZeroIfNeeded(curMonth), addZeroIfNeeded(curDay)))   
+        time.sleep(2)
 
-        tradeTimeSelect = Select(driver.find_element_by_css_selector("#MarketCode"))
-        tradeTimeSelect.select_by_value("0")
+        try:
 
-        contractSelect = Select(driver.find_element_by_css_selector("#commodity_idt"))
-        contractSelect.select_by_value("TXO")
+            tradeTimeSelect = Select(driver.find_element_by_css_selector("#MarketCode"))
+            tradeTimeSelect.select_by_value("0")
 
-        queryBtn = driver.find_element_by_css_selector("#button")
-        queryBtn.click()
+            contractSelect = Select(driver.find_element_by_css_selector("#commodity_idt"))
+            contractSelect.select_by_value("TXO")
 
-        time.sleep(6)
+            queryBtn = driver.find_element_by_css_selector("#button")
+            queryBtn.click()
 
-        
-        # deliver page-source to parse HTML
-        page_source = driver.page_source
-        listData = parser4staticOptDis(page_source, curYear, curMonth, curDay, nextYear, nextMonth)
-        
-        #turn 2D list into 2D tuple
-        tupleData = tuple(map(tuple, listData))
-        # print(tupleData)
+            time.sleep(6)
 
-        #update SQL
-        updateSQL(tupleData, 
-            "ana_optdis", 
-            '(date, contract, duetime, target, cp, finalprice, dealprice, pricevar, amountinday, amountleft)', 
-            '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-            True
-        )
+            # deliver page-source to parse HTML
+            page_source = driver.page_source
+            listData = parser4staticOptDis(page_source, curYear, curMonth, curDay, nextYear, nextMonth)
+            
+            #turn 2D list into 2D tuple
+            tupleData = tuple(map(tuple, listData))
+            # print(tupleData)
 
-        time.sleep(5)
+            #update SQL
+            updateSQL(tupleData, 
+                "ana_optdis", 
+                '(date, contract, duetime, target, cp, finalprice, dealprice, pricevar, amountinday, amountleft)', 
+                '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                True
+            )
 
-        # Close window
-        driver.quit()
+            time.sleep(5)
+
+            # Close window
+            driver.quit()
+
+        except:
+            # Close window
+            driver.quit()
+            print("Today is holiday! No need to crawl anything, hava a nice break!")
+            time.sleep(60*15)
 
     else:
         print("Static crawler is pending ... \nWait for %d:%d on weekdays to start" %(startCollectTime.hour, startCollectTime.minute))
         time.sleep(60*15)
 
 
-def staticBigguyLeftCrawler(params):  #"2020/11/25"
-
-    # add 0 if needed
-    def addZeroIfNeeded(factor):
-        if (len(str(factor)) < 2):
-            return "0%s" %factor
-        else:
-            return str(factor)
+def staticBigguyLeftCrawler(params):  #e.g. "2020/11/25"
 
     # distinguish day of weeks (0 => Mon; 6 => Sun)
     isWeekdays = getNowDayOfWeek('Asia/Shanghai') < 5
