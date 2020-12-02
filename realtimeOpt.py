@@ -1,9 +1,5 @@
-import math
-import random
-
 from crawler.comp.comp import basicParams
-from crawler.crawler import realtimeOptCrawler, realtimeBigIndexCrawler, staticOptDisCrawler
-from crawler.timeManager import currentTimeGetter, getNowDayOfWeek, currentDateGetter, time_in_range
+from crawler.crawler import realtimeOptCrawler
 
 
 optParams = {
@@ -15,9 +11,7 @@ optParams = {
 }
 
 # crawl realtime options
-# realtimeOptCrawler(optParams)
+realtimeOptCrawler(optParams)
 
-# crawl static options distribution
-# staticOptDisCrawler()
 
 

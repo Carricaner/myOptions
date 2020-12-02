@@ -12,7 +12,7 @@ db_settings = {
 }
 
 
-def updateSQL(values, table, columns, items):
+def updateSQL(values, table, columns, items, depleteFormer):
 
     try:
         # make a connection
@@ -26,7 +26,11 @@ def updateSQL(values, table, columns, items):
 
         # commands
         # select = "SELECT * FROM %s" %table
-        deleteall = "DELETE FROM %s" %table
+
+        if (depleteFormer):
+            deleteall = "DELETE FROM %s" %table
+            cursor.execute(deleteall)
+        
         insertFirst = "INSERT INTO %s" %table
         insertMulti = insertFirst + ' ' + columns + ' VALUES ' + items
 
@@ -34,7 +38,6 @@ def updateSQL(values, table, columns, items):
         # result = cursor.execute(select)
         # result = cursor.fetchall()
         # print(result)
-        cursor.execute(deleteall)
         rows = cursor.executemany(insertMulti, values)
         # display how many rows being affected
         print("(Success) There is(are) %d row(s) being affected." %rows) 
@@ -53,3 +56,38 @@ def updateSQL(values, table, columns, items):
 
         print("(Fail) Something went wrong, rolling back changes...")
         conn.rollback()
+
+
+def flushSQL(table):
+
+    try:
+        # make a connection
+        conn = pymysql.connect(**db_settings)
+
+        # build a cursor
+        cursor = conn.cursor()
+
+        # start a transaction
+        conn.begin()
+        
+        deleteall = "DELETE FROM %s" %table
+        
+        cursor.execute(deleteall)
+
+        # display how many rows being affected
+        print("SQL is depleted.") 
+
+        # commit changes
+        conn.commit()
+
+        # close cursor
+        cursor.close()
+
+        # close connection
+        conn.close()
+
+    except:
+
+        print("(Fail) Something went wrong, rolling back changes...")
+        conn.rollback()
+

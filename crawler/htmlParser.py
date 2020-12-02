@@ -147,3 +147,59 @@ def parser4staticOptDis(page_source, curYear, curMonth, curDay, nextYear, nextMo
         trCounter += 1
     
     return data
+
+
+def parser4staticBigguyLeft(page_source, dateStringInTheCurrentPage):
+
+    soup = BeautifulSoup(page_source, 'html.parser')
+    tbody = soup.select_one("#printhere > div:nth-child(4) > table > tbody > tr:nth-child(2) > td > table > tbody")
+    trs = tbody.select("tr")
+    data = []
+
+    crawltrColumns = [4, 5, 6]
+    trCounter = 1
+    for tr in trs:
+
+        if(trCounter in crawltrColumns):
+
+            tempArray = [dateStringInTheCurrentPage]
+            tds = tr.select("td")
+            tdCounter = 1
+            counter = 1
+
+            for td in tds:
+
+                if(trCounter == 4):
+
+                    if(tdCounter not in [1, 2]):
+
+                        try:
+                            font = td.driver.selec_one("div:nth-child(1) font")
+                            tempArray.append(font.text.strip().replace(",",""))
+                        except:
+                            div = td.select_one("div:nth-child(1)")
+                            tempArray.append(div.text.strip().replace(",",""))
+                        counter += 1
+
+                else:
+
+                    try:
+                        font = td.driver.selec_one("div:nth-child(1) font")
+                        tempArray.append(font.text.strip().replace(",",""))
+                    except:
+                        div = td.select_one("div:nth-child(1)")
+                        tempArray.append(div.text.strip().replace(",",""))
+                    counter += 1
+                
+                if (counter == 13):
+                    data.append(tempArray)
+                    counter = 1
+
+                tdCounter += 1
+
+        trCounter += 1
+
+    return data
+
+
+

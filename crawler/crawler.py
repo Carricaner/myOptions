@@ -11,8 +11,8 @@ import json
 
 
 # ===== Inner Usage ======
-from .mysql import updateSQL
-from .htmlParser import parser4realtimeOpt, parser4realtimeBigIndex, parser4staticOptDis
+from .mysql import updateSQL, flushSQL
+from .htmlParser import parser4realtimeOpt, parser4realtimeBigIndex, parser4staticOptDis, parser4staticBigguyLeft
 from .timeManager import time_in_range, currentTimeGetter, getNowDayOfWeek, currentDateGetter, getDateTimeProd
 # ===== Redis Setting ======
 cacheRedis = redis.Redis(host='localhost', port=6379, decode_responses=True)
@@ -186,15 +186,14 @@ def realtimeBigIndexCrawler(params):
 
 
 
-
 def staticOptDisCrawler():
 
     # distinguish day of weeks (0 => Mon; 6 => Sun)
     isWeekdays = getNowDayOfWeek('Asia/Shanghai') < 5
 
     # set crawling time
-    startCollectTime = datetime.time(3, 30, 0)
-    endCollectTime =  datetime.time(23, 35, 0)
+    startCollectTime = datetime.time(16, 30, 0)
+    endCollectTime =  datetime.time(16, 40, 0)
     curTime = currentTimeGetter('Asia/Shanghai')
 
     # current date
@@ -252,7 +251,8 @@ def staticOptDisCrawler():
         updateSQL(tupleData, 
             "ana_optdis", 
             '(date, contract, duetime, target, cp, finalprice, dealprice, pricevar, amountinday, amountleft)', 
-            '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+            '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+            True
         )
 
         time.sleep(5)
@@ -266,4 +266,161 @@ def staticOptDisCrawler():
 
 
 
+def staticBigguyLeftCrawler(params):  #"2020/11/25"
 
+    # add 0 if needed
+    def addZeroIfNeeded(factor):
+        if (len(str(factor)) < 2):
+            return "0%s" %factor
+        else:
+            return str(factor)
+
+    # distinguish day of weeks (0 => Mon; 6 => Sun)
+    isWeekdays = getNowDayOfWeek('Asia/Shanghai') < 5
+
+    # current time
+    curTime = currentTimeGetter('Asia/Shanghai')
+
+    # current date
+    curYear = currentDateGetter('Asia/Shanghai').year
+    curMonth = currentDateGetter('Asia/Shanghai').month
+    curDay = currentDateGetter('Asia/Shanghai').day
+
+    # url
+    url = "https://www.taifex.com.tw/cht/3/futContractsDate"
+
+    if (isWeekdays and time_in_range(params['startCollectTime'], params['endCollectTime'], curTime)):
+        
+        # choose whether headless or not
+        if ( params['isheadless'] ):
+            option = webdriver.ChromeOptions()
+            option.add_argument('--headless')
+            option.add_argument('--disable-notifications')
+            driver = webdriver.Chrome(options = option)
+        else:
+            driver = webdriver.Chrome()
+
+        # get URL, select desired options and click confirm button
+        driver.get(url)
+        time.sleep(3)
+
+        dateInput = driver.find_element_by_css_selector("#queryDate")
+        dateInput.clear()
+        todayString = "%s/%s/%s" %(addZeroIfNeeded(curYear), addZeroIfNeeded(curMonth), addZeroIfNeeded(curDay))
+
+        contractSelect = Select(driver.find_element_by_css_selector("#commodityId"))
+        contractSelect.select_by_value("TXF")
+
+        if (params['isUpdateMode']):
+            print("Update Mode Choosen.")
+            dateInput.send_keys(todayString)
+            queryBtn = driver.find_element_by_css_selector("#button")
+            queryBtn.click()
+            time.sleep(5)
+
+            page_source = driver.page_source
+            try:
+                tableTeller = driver.find_element_by_css_selector("#printhere > div:nth-child(4) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(4) > td:nth-child(4) > div:nth-child(1) > font")
+                print("The page is crawlable.")
+                data = parser4staticBigguyLeft(page_source, todayString)
+                #turn 2D list into 2D tuple
+                tupleData = tuple(map(tuple, data))
+                print(tupleData)
+                print("\n")
+
+                #update SQL
+                updateSQL(
+                    tupleData, 
+                    "ana_bigguyfs", 
+                    '(date, identity, trade_m_num, trade_m_money, trade_l_num, trade_l_money, trade_t_num, trade_t_money, left_m_num, left_m_money, left_l_num, left_l_money, left_t_num, left_t_money)', 
+                    '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                    False
+                )
+
+                time.sleep(5)
+                # Close window
+                driver.quit()
+
+            except:
+                # Close window
+                driver.quit()
+                print("Today is special holiday, no need to crawl anything!")
+                time.sleep(60*15)
+
+
+        else:
+            print("History Mode Choosen.")
+            dateInput.send_keys(params['fromWhichDay'])
+
+            queryBtn = driver.find_element_by_css_selector("#button")
+            queryBtn.click()
+
+
+            time.sleep(5)
+
+            isSthLeftToCrawled = True
+
+            while (isSthLeftToCrawled):
+                
+                dateInput = driver.find_element_by_css_selector("#queryDate")
+                dateStringInTheCurrentPage = dateInput.get_attribute("value").strip()
+
+                page_source = driver.page_source
+                if (dateStringInTheCurrentPage == todayString):
+                    print("It is the last page.")
+                    #crawl the page
+                    data = parser4staticBigguyLeft(page_source, dateStringInTheCurrentPage)
+                    tupleData = tuple(map(tuple, data))
+                    # print(tupleData)
+                    # print("\n")
+
+                    #update SQL
+                    updateSQL(
+                        tupleData, 
+                        "ana_bigguyfs", 
+                        '(date, identity, trade_m_num, trade_m_money, trade_l_num, trade_l_money, trade_t_num, trade_t_money, left_m_num, left_m_money, left_l_num, left_l_money, left_t_num, left_t_money)', 
+                        '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                        False
+                    )
+
+                    isSthLeftToCrawled = False
+                else:
+                    #flushall SQL data once only
+                    if (dateStringInTheCurrentPage == params['fromWhichDay']):
+                        flushSQL("ana_bigguyfs")
+
+                    try:
+                        tableTeller = driver.find_element_by_css_selector("#printhere > div:nth-child(4) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(4) > td:nth-child(4) > div:nth-child(1) > font")
+                        print("The page is crawlable.")
+                        #crawl the page
+                        data = parser4staticBigguyLeft(page_source, dateStringInTheCurrentPage)
+                        tupleData = tuple(map(tuple, data))
+                        # print(tupleData)
+                        # print("\n")
+
+                        #update SQL
+                        updateSQL(
+                            tupleData, 
+                            "ana_bigguyfs", 
+                            '(date, identity, trade_m_num, trade_m_money, trade_l_num, trade_l_money, trade_t_num, trade_t_money, left_m_num, left_m_money, left_l_num, left_l_money, left_t_num, left_t_money)', 
+                            '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                            False
+                        )
+
+                        nextPageBtn = driver.find_element_by_css_selector("#button4")
+                        nextPageBtn.click()
+                        time.sleep(5)
+
+                    except:
+                        nextPageBtn = driver.find_element_by_css_selector("#button4")
+                        nextPageBtn.click()
+                        time.sleep(5)
+
+
+            time.sleep(3)
+
+            # Close window
+            driver.quit()    
+    else:
+        print("Static crawler is pending ... \nWait for %d:%d on weekdays to start" %(startCollectTime.hour, startCollectTime.minute))
+        time.sleep(60*15)
