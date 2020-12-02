@@ -12,7 +12,7 @@ import json
 
 # ===== Inner Usage ======
 from .mysql import updateSQL, flushSQL
-from .htmlParser import parser4realtimeOpt, parser4realtimeBigIndex, parser4staticOptDis, parser4staticBigguyLeft
+from .htmlParser import parser4realtimeOpt, parser4realtimeBigIndex, parser4staticOptDis, parser4staticBigguyLeft, parser4staticBigIndex
 from .timeManager import time_in_range, currentTimeGetter, getNowDayOfWeek, currentDateGetter, getDateTimeProd
 # ===== Redis Setting ======
 cacheRedis = redis.Redis(host='localhost', port=6379, decode_responses=True)
@@ -112,8 +112,6 @@ def realtimeOptCrawler(params):
         time.sleep(60*30)
 
 
-
-
 def realtimeBigIndexCrawler(params):
     
 
@@ -182,8 +180,6 @@ def realtimeBigIndexCrawler(params):
     else: 
         print("It is weekend! Have a break!")
         time.sleep(60*30)
-
-
 
 
 def staticOptDisCrawler():
@@ -263,7 +259,6 @@ def staticOptDisCrawler():
     else:
         print("Static crawler is pending ... \nWait for %d:%d on weekdays to start" %(startCollectTime.hour, startCollectTime.minute))
         time.sleep(60*15)
-
 
 
 def staticBigguyLeftCrawler(params):  #"2020/11/25"
@@ -424,3 +419,93 @@ def staticBigguyLeftCrawler(params):  #"2020/11/25"
     else:
         print("Static crawler is pending ... \nWait for %d:%d on weekdays to start" %(startCollectTime.hour, startCollectTime.minute))
         time.sleep(60*15)
+
+
+def staticBigIndexCrawler(params):
+    
+    # add 0 if needed
+    def addZeroIfNeeded(factor):
+        if (len(str(factor)) < 2):
+            return "0%s" %factor
+        else:
+            return str(factor)
+
+    # distinguish day of weeks (0 => Mon; 6 => Sun)
+    isWeekdays = getNowDayOfWeek('Asia/Shanghai') < 5
+
+    # current time
+    curTime = currentTimeGetter('Asia/Shanghai')
+
+    # current date
+    curYear = currentDateGetter('Asia/Shanghai').year
+    curMonth = currentDateGetter('Asia/Shanghai').month
+    curDay = currentDateGetter('Asia/Shanghai').day
+
+    # url
+    url = "https://www.twse.com.tw/zh/page/trading/indices/MI_5MINS_HIST.html"
+
+    if (isWeekdays and time_in_range(params['startCollectTime'], params['endCollectTime'], curTime)):
+        
+        # choose whether headless or not
+        if ( params['isheadless'] ):
+            option = webdriver.ChromeOptions()
+            option.add_argument('--headless')
+            option.add_argument('--disable-notifications')
+            driver = webdriver.Chrome(options = option)
+        else:
+            driver = webdriver.Chrome()
+
+        # get URL
+        driver.get(url)
+        time.sleep(3)
+
+        yearInput = Select(driver.find_element_by_css_selector("#d1 > select:nth-child(1)"))
+        yearInput.select_by_value("%s" %curYear)  
+        time.sleep(3)
+    
+
+        for i in range(curMonth):  
+
+            time.sleep(2)
+            monthSelect = Select(driver.find_element_by_css_selector("#d1 > select:nth-child(2)"))
+            monthSelect.select_by_value("%s" %(i+1))
+            time.sleep(2)
+            
+            queryByn = driver.find_element_by_css_selector("#main-form > div > div > form > a")
+            queryByn.click()
+            time.sleep(3)
+
+            print("Year: %s Month: %s Crawled." %(curYear, i+1))
+            page_source = driver.page_source
+            data = parser4staticBigIndex(page_source)
+
+            tupleData = tuple(map(tuple, data))
+            # print(tupleData)
+            # print("\n")
+
+            #update SQL
+            if (i == 0):
+                flushSQL("ana_bigindex")
+
+            updateSQL(
+                tupleData, 
+                "ana_bigindex", 
+                '(date, open, high, low, close)', 
+                '(%s, %s, %s, %s, %s)',
+                False
+            )
+
+        # Close window
+        driver.quit()
+
+        
+
+
+
+            
+            
+
+
+            
+
+            

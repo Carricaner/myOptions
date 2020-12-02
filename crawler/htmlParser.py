@@ -202,4 +202,35 @@ def parser4staticBigguyLeft(page_source, dateStringInTheCurrentPage):
     return data
 
 
+def parser4staticBigIndex(page_source):
+
+    soup = BeautifulSoup(page_source, 'html.parser')
+    tbody = soup.select_one('#report-table > tbody')
+    trs = tbody.select('tr')
+    data = []
+
+    for tr in trs:
+        tds = tr.select("td")
+        tempArray = []
+        counter = 1
+        for td in tds:
+
+            if (counter == 1):
+                tempArray.append(td.text)
+            else:
+                tempArray.append(td.text.replace(",",""))
+            
+            if (counter == 5):
+                data.append(tempArray)
+                counter = 1
+            else:
+                counter += 1
+    
+    return data
+        
+
+        
+
+
+
 
