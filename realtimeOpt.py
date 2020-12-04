@@ -5,7 +5,7 @@ from crawler.crawler import realtimeOptCrawler
 optParams = {
     'isDay': basicParams['isDay'],
     'isNight': basicParams['isNight'],
-    'isheadless': False,
+    'isheadless': True,
     'dayOfWeek' : basicParams['dayOfWeek'],
     'crawlHTMLTimes' : 1,
 }

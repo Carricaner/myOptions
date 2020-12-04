@@ -1,17 +1,10 @@
 require('dotenv').config();
 
-
-// Express Initialization
+//=====================<< Express Initialization >>=====================
 const express = require('express');
 const bodyparser = require('body-parser');
 const cors = require('cors');
 const app = express();
-
-//=====================Darren's Socket.io=====================
-const server = require("http").createServer(app);
-const io = require('socket.io');
-module.exports = { server, io };
-//============================================================
 
 
 const bodyParser = require("body-parser");
@@ -26,33 +19,22 @@ app.use(express.static('public'));
 
 
 
+//=====================<< Darren's Socket.io >>=====================
+const server = require("http").createServer(app);
+const { deploySocket } = require("./util/util_socket.js")
+deploySocket(server)
+
+
 //=====================<< CORS allow all >>=====================
 app.use(cors());
 
 
 
 //=====================<< Redis >>=====================
-const redis = require("redis");
-const client = redis.createClient();
-
-let redisGears = {};
-redisGears.turnOn = () => {
-	client.on("connect", () => {
-		console.log("<<<--- Redis: client connected --->>>");
-	});
-};
-// redisGears.setAsync = promisify(client.set).bind(client);
-// redisGears.getAsync = promisify(client.get).bind(client);
-redisGears.client = client;
-
-redisGears.turnOn();
-
-redisGears.client.get("realtimeBigIndex", (err, value) => {
-	console.log(JSON.parse(value))
-})
-
-
-
+const { redisTurnOn } = require("./util/util_redis")
+redisTurnOn()
+const { startRedisRefresher } = require("./server/controllers/redisUpdate_controller")
+startRedisRefresher() // Turn on redis flusher
 
 //=====================<< MySQL >>=====================
 const mysql = require("mysql");
@@ -141,16 +123,6 @@ const transPromise = function(sql, container = null, carrier = null) {
 
 
 
-
-
-
-
-
-
-
-
-
-
 //=====================<< API routes >>=====================
 // app.use('/api/' + API_VERSION,
 //     [
@@ -161,7 +133,11 @@ const transPromise = function(sql, container = null, carrier = null) {
 //         require('./server/routes/order_route'),
 //     ]
 // );
-
+app.use('/api/1.0',
+	[
+		require('./server/routes/admin_route'),		
+	]
+)
 
 
 //=====================<< test update plot>>=====================
@@ -193,42 +169,6 @@ app.get("/getPromptOptData", (req, res) => {
 })
 
 
-
-
-// var servIo = io.listen(server);
-// servIo.on('connection', function (socket) {
-//     console.log("Somebody is here! Welcome!")
-//     setInterval( function () {
-//         socket.emit('people', { 
-//             'second': new Date().getSeconds(), 
-//             'people': 15,
-//             'time': 2
-//         });
-//     }, 1000);
-
-//     // socket.emit('people', { 'second': new Date().getSeconds(), 'people': peopleNumber });
-
-//     socket.on('chat message', (msg) => {
-//         console.log('message: ' + msg);
-//       });
-
-//     socket.on('disconnect', () => {
-//         console.log('user disconnected');
-// 	});
-	
-// });
-
-// var servIo = io.listen(server);
-// servIo.on('connection', function (socket) {
-// 	setInterval( function () {
-// 		        socket.emit('data', { 
-// 		            'second': new Date().getSeconds(), 
-// 		            'people': 15,
-// 		            'time': 2
-// 		        });./
-
-// })
-
 app.get("/testAPI", (req, res) => {
 
 
@@ -251,8 +191,6 @@ app.get("/testAPI", (req, res) => {
 		
 	// })
 })
-
-
 
 
 app.get("/getPromptBigIndexData", (req, res) => {
@@ -296,9 +234,6 @@ app.get("/getPromptBigIndexData", (req, res) => {
 
 
 
-
-
-
 //===============================================================
 
 
@@ -319,7 +254,7 @@ app.use(function(err, req, res, next) {
 });
 
 server.listen(3000, () => {
-    console.log('<< Listening port: 3000 >>')
+    console.log('<< Server: listening to port 3000 >>')
 })
 
 module.exports = { app };
