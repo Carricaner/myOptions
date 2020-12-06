@@ -10,10 +10,18 @@ const deploySocket = (server) => {
 
         // periodical emitter
         setInterval(() => {
-            // refresh 大盤指數/台指期 to client
-            redisClient.get("realtimeBigIndex", (err, value) => {
+            // refresh 加權指數 to client
+            redisClient.get("bigIndexContainer", (err, value) => {
                 socket.emit(
-                    'rtBigIndex',
+                    'bigIndexContainer',
+                    JSON.parse(value)
+                )
+            })
+
+            // refresh 台指期 to client
+            redisClient.get("futureContainer", (err, value) => {
+                socket.emit(
+                    'futureContainer',
                     JSON.parse(value)
                 )
             })
@@ -21,21 +29,12 @@ const deploySocket = (server) => {
             // refresh 選擇權報價 to client
             redisClient.get("realtimeOpt", (err, value) => {
                 socket.emit(
-                    'rtOptDis',
+                    'realtimeOpt',
                     JSON.parse(value)
                 )
             })
-            // test
-            socket.emit(
-                "test",
-                {
-                    x: ["2020-12-01 12:00:00", "2020-12-01 12:01:00", "2020-12-01 12:02:00", "2020-12-01 12:02:00"],
-                    y: [14152, 12190, 13253, 13253]
-                }
 
-            )
-
-        }, 3*1000);
+        }, 5*1000);
 
 
         // disconnection

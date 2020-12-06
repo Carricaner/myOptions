@@ -2,19 +2,30 @@ var socket = io.connect();
 
 
 // ---------- socket part ----------
-socket.on('rtBigIndex', (receiver) => {
-    let { date, time, data } = receiver
-    // console.log(date)
-    // console.log(time)
-    // console.log(data)
+socket.on('futureContainer', (receiver) => {
+    console.log(receiver)
+    
+    // update options
+    chart.update({
+        yAxis: {
+            min: receiver.low-20,
+            max: receiver.high+20,
+        }
+    })
+    // update series
+    chart.series[0].update({ data: receiver.data }, false)
+    
+    // redraw plots
+    chart.redraw()
+
 })
 
 socket.on('rtOptDis', (receiver) => {
-    let { date, time, data } = receiver
-    console.log(date + ' ' + time)
-    var a = moment.tz(date + ' ' + time, "Asia/Taipei")
-    console.log(a.format())
-    console.log(a.valueOf())
+    // let { date, time, data } = receiver
+    // console.log(date + ' ' + time)
+    // var a = moment.tz(date + ' ' + time, "Asia/Taipei")
+    // console.log(a.format())
+    // console.log(a.valueOf())
     
     // console.log(data)
 })
@@ -22,86 +33,40 @@ socket.on('rtOptDis', (receiver) => {
 socket.on('test', (receiver) => {
     let { x, y } = receiver
 
-    chart.series[0].update({
-        data: [
-            [time1, Math.random()*15],
-            ]
-      }, false)
-      chart.redraw()
 })
 
 
 
-// highcharts
-// set global setting 
-Highcharts.setOptions({
-    chart: {
-        backgroundColor: {
-            linearGradient: [0, 0, 500, 500],
-            stops: [
-                [0, 'rgb(255, 255, 255)'],
-                [1, 'rgb(240, 240, 255)']
-            ]
-        },
-        borderWidth: 2,
-        plotBackgroundColor: 'rgba(255, 255, 255, .9)',
-        plotShadow: true,
-        plotBorderWidth: 1
-    }
-});
+// ---------- highcharts ----------
+// global setting 
+Highcharts.setOptions(globaloptions);
 
 
 
-let time1 = 1607072008827 + 28800000
-
-
-
-var chart = new Highcharts.Chart('container', {
-    chart: {
-        type: 'area'
-    },
-    title: {
-        text: '大盤指數'
-    },
-    // time: {
-    //     timezone: 'Asia/Taipei'
-    // },
-    xAxis: {
-        title: { 
-            text: '點數',
-        },
-        type: 'datetime',
-        dateTimeLabelFormats: {
-            // month: '%e. %b',
-            // year: '%b',
-            // day: '%e. %b',
-            minute: '%H:%M',
-        },
-    },
-    yAxis: {
-        title: {
-            text: '時間'
+fetch('/api/1.0/realtime/future')
+.then(response => {
+    let message = response.json();
+    return message;
+})
+.then(result => {
+    
+    // update initial options
+    chart.update({
+        yAxis: {
+            min: result.futureIndex.low-20,
+            max: result.futureIndex.high+20,
         }
-    },
-    series: [{
-        name: 'Jane',
-        data: [[time1,1]]
-    }, {
-        name: 'John',
-        data: [[time1,5]],
-        color: '#BF0B23',
-    }]
+    })
+
+    // update initial series
+    chart.series[0].update({ data: result.futureIndex.data }, false)
+    
+    // redraw plots
+    chart.redraw()
 });
 
-console.log(
-    'Current time in New York',
-    chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
-);
-
-
-
-
-
+var chart = new Highcharts.Chart('container', options4chart);
+var chart2 = new Highcharts.Chart('container2', options4chart2);
 
 
 

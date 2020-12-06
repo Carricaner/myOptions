@@ -9,7 +9,7 @@ function startRedisRefresher() {
             addRealtimeData2Container()
         }
     },
-    10*60*1000)
+    10*1000*60)
 
     setInterval(() => {
         if (TWtimeParams.isafterDayCleanTime || TWtimeParams.isafterNightCleanTime) {
@@ -17,7 +17,7 @@ function startRedisRefresher() {
             flushRedisContainer("futureContainer")
         }
     },
-    15*60*1000)
+    15*1000*60)
 
 }
 
@@ -111,6 +111,7 @@ function flushRedisContainer(key) {
         }
     })
 }
+
 
 
 
