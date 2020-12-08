@@ -4,7 +4,7 @@ const { getIndex } = require('../controllers/realtime_controller')
 
 
 
-router.route('/realtime/future')
+router.route('/realtime/getIndex')
 .get(getIndex);
 
 

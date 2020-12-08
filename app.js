@@ -19,7 +19,7 @@ app.use(express.static('public'));
 
 
 
-//=====================<< Darren's Socket.io >>=====================
+//=====================<< Socket.io >>=====================
 const server = require("http").createServer(app);
 const { deploySocket } = require("./util/util_socket.js")
 deploySocket(server)
@@ -34,15 +34,15 @@ app.use(cors());
 const { redisTurnOn } = require("./util/util_redis")
 redisTurnOn()
 const { startRedisRefresher } = require("./server/controllers/redisUpdate_controller")
-startRedisRefresher() // Turn on redis flusher
+startRedisRefresher() // Turn on redis refresher
 
 
 //=====================<< API routes >>=====================
-
-
 app.use('/api/1.0',
 	[
+		require('./server/routes/auth_route'),
 		require('./server/routes/user_route'),
+		require('./server/routes/trade_route'),
 		require('./server/routes/admin_route'),
 		require('./server/routes/realtime_route'),
 	]

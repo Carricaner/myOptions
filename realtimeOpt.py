@@ -7,7 +7,7 @@ optParams = {
     'isNight': basicParams['isNight'],
     'isheadless': True,
     'dayOfWeek' : basicParams['dayOfWeek'],
-    'crawlHTMLTimes' : 1,
+    'crawlHTMLTimes' : 1000,
 }
 
 # crawl realtime options

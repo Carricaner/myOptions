@@ -1,23 +1,31 @@
 var moment = require('moment-timezone');
 const { redisClient, redisGet } = require("../../util/util_redis")
-const { TWtimeParams } = require("../../util/util_timezone")
+const { getNowTime } = require("../../util/util_timezone")
 
 function startRedisRefresher() {
 
     setInterval(() => {
+        let TWtimeParams = getNowTime()
         if (TWtimeParams.isDay || TWtimeParams.isNight) {
             addRealtimeData2Container()
         }
     },
-    10*1000*60)
+    6*1000)
 
     setInterval(() => {
+        let TWtimeParams = getNowTime()
         if (TWtimeParams.isafterDayCleanTime || TWtimeParams.isafterNightCleanTime) {
             flushRedisContainer("bigIndexContainer")
             flushRedisContainer("futureContainer")
         }
     },
-    15*1000*60)
+    10*1000)
+
+    setInterval(() => {
+        let TWtimeParams = getNowTime()
+        console.log(TWtimeParams)
+    },
+    5000)
 
 }
 
@@ -114,7 +122,7 @@ function flushRedisContainer(key) {
 
 
 
-
 module.exports = {
-    startRedisRefresher
+    startRedisRefresher,
+    flushRedisContainer,
 }

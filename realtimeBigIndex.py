@@ -7,7 +7,7 @@ bigIndexParams = {
     'isNight': basicParams['isNight'],
     'isheadless': True,
     'dayOfWeek' : basicParams['dayOfWeek'],
-    'crawlHTMLTimes' : 100,
+    'crawlHTMLTimes' : 1000,
 }
 
 # crawl realtime bigIndex

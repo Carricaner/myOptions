@@ -1,33 +1,36 @@
 const { transPromise } = require("./mysql")
 
 
-const sqlGetUserMoneyLeft = () => {
-    return transPromise('SELECT * FROM moneynprofit')
+const sqlGetUser = (lookupArray) => {
+    let lookupString = ``
+    for (let i = 0; i < lookupArray.length; i++) {
+        if (i == lookupArray.length - 1) {
+            lookupString += `${lookupArray[i]}`
+        } else {
+            lookupString += `${lookupArray[i]}, `
+        }
+    }
+    return transPromise(`SELECT ${lookupString} FROM users`)
     .then(result => {return result.result})
 }
 
 
-const sqlUpdateUserMoneyLeft = (change) => {
-    return transPromise('Update moneynprofit SET moneyleft = ?, totalprofit = ? WHERE id = ?', change)
-    .then(result => {return result})
-}
-
-
-const sqlAddUserParts = (userPart) => {
-    return transPromise('INSERT INTO userspart SET ?', userPart)
-    .then(result => {return result})
-}
-
-
-const sqlGetUserParts = (userId) => {
-    return transPromise(`SELECT * FROM userspart WHERE user_id = ${userId}`)
+const sqlGetUserWithSpecificEmail = (email, localorfb) => {
+    return transPromise(`SELECT * FROM users WHERE email = '${email}' AND localorfb = '${localorfb}'`)
     .then(result => {return result.result})
 }
+
+
+const sqlInsertUser = (user) => {
+    return transPromise('INSERT INTO users SET ?', user)
+    .then(result => {return result})
+}
+
+
 
 
 module.exports = {
-    sqlGetUserMoneyLeft,
-    sqlAddUserParts,
-    sqlUpdateUserMoneyLeft,
-    sqlGetUserParts
+    sqlGetUser,
+    sqlGetUserWithSpecificEmail,
+    sqlInsertUser,
 }

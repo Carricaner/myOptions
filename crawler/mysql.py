@@ -1,13 +1,17 @@
 import pymysql
+from dotenv import load_dotenv
+import os
 
+# load env in crawler package
+load_dotenv()
 
 # SQL params setting
 db_settings = {
-    "host": "newrdshello.cdeaz4rohdnt.us-east-2.rds.amazonaws.com",
+    "host": os.getenv("aws_rds_mysql_HOST"),
     "port": 3306,
-    "user": "crawler",
-    "password": "1qaz2wsx3edc",
-    "db": "myoptions",
+    "user": os.getenv("aws_rds_mysql_USER"),
+    "password": os.getenv("aws_rds_mysql_PASSWORD"),
+    "db": os.getenv("aws_rds_mysql_DATABASE"),
     "charset": "utf8"
 }
 
@@ -91,3 +95,5 @@ def flushSQL(table):
         print("(Fail) Something went wrong, rolling back changes...")
         conn.rollback()
 
+
+# print(db_settings)

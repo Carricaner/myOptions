@@ -1,62 +1,100 @@
+require('dotenv').config();
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+
 const { 
-    sqlGetUserMoneyLeft,
-    sqlAddUserParts,
-    sqlUpdateUserMoneyLeft,
-    sqlGetUserParts
+    token_secret,
+    token_expireIn,
+} = process.env;
+
+const {
+    sqlGetUserWithSpecificEmail,
+    sqlInsertUser,
  } = require('../models/user_model')
 
 
-const buyParts = (req, res) => {
-    const { act, cost, cp, month, number, target, token } = req.body
-    let moneynprofitId = 0
-    let moneyLeft = 0
-    let moneySpent = 0
+const checkSignUp = (req, res) => {
+    let { email, password } = req.body
+    const hash = crypto.createHash("sha256");
 
-    // 使用者部分還沒有添加 先指定一位
-    sqlGetUserMoneyLeft()
+    // Hash password
+    let container = {
+        email: email,
+        password: hash.update(password).digest("hex"),
+        localorfb: "local",
+    }
+    sqlGetUserWithSpecificEmail(email, 'local')
     .then(result => {
-        moneySpent = cost * number * 50
-        moneynprofitId = result[0].id
-        moneyLeft = result[0].moneyleft
-
-        if (moneySpent < moneyLeft) { // logical的部分記得加手續費
-            let userPart = {
-                user_id: 38,
-                prod_target: target,
-                prod_act: act,
-                prod_month: month,
-                prod_cp: cp,
-                prod_number: number,
-                prod_cost: cost,
-                prod_promise: moneySpent,
-                prod_dealprice: 0,
-                prod_profit: 0,
-            }
-            sqlAddUserParts(userPart)
-            return {msg: 'success'}
+        if (!result[0]) {
+            return sqlInsertUser(container)
         } else {
-            return {msg: 'fail'}
+            return {msg: 'failure'}
         }
     })
     .then(result => {
-        if (result.msg == 'success') {
-            sqlUpdateUserMoneyLeft([moneyLeft-moneySpent, 0, moneynprofitId])
+        if (result.insertId) {
+            const payload = {
+                userId: result.insertId,
+                email: email,
+            }
+            let expiration = Number(token_expireIn)
+			jwt.sign(
+                {payload},
+                token_secret,
+                {expiresIn: `${expiration}s`},
+                (err, token) => {
+                    const sent = {
+                        msg: 'success',
+                        token: token
+                    }
+                    res.send(sent)
+            })
+        } else {
+            res.send({msg: 'fail'})
         }
-        res.send(result)
     })
 }
 
 
-// const showUserParts = (req, res) => {
-//     const { token } = req.body
+const checkSignIn = (req, res) => {
+    let { email, password } = req.body
+    const hash = crypto.createHash("sha256")
+    let passwordAfterHex = hash.update(password).digest("hex")
 
-//     sqlGetUserParts()
-//     .then(result => {
+    sqlGetUserWithSpecificEmail(email, 'local')
+    .then(result => {
+        if (result[0]) {
+            if (result[0].email == email && result[0].password == passwordAfterHex) {
+                const payload = {
+                    userId: result[0].id,
+                    email: result[0].email,
+                }
+                let expiration = Number(token_expireIn)
+                jwt.sign(
+                    {payload},
+                    token_secret,
+                    {expiresIn: `${expiration}s`},
+                    (err, token) => {
+                        const sent = {
+                            msg: 'success',
+                            token: token
+                        }
+                        res.send(sent)
+                })
+            } else {
+                res.send(sent = {msg: 'wrongPassword'})
+            }
+        } else {
+            res.send(sent = {msg: 'invalidEmail'})
+        }
+    })
 
-//     })
-// }
+}
+
 
 
 module.exports = {
-    buyParts
+    checkSignIn,
+    checkSignUp,
+
 }

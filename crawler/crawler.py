@@ -114,7 +114,6 @@ def realtimeOptCrawler(params):
 
 def realtimeBigIndexCrawler(params):
     
-
     # choose day or night
     if (params['isDay']):
         # 大盤日盤
@@ -272,11 +271,18 @@ def staticOptDisCrawler(params):
             time.sleep(60*15)
 
     else:
-        print("Static crawler is pending ... \nWait for %d:%d on weekdays to start" %(startCollectTime.hour, startCollectTime.minute))
+        print("Not crawling time... sleep for 15 mins.")
         time.sleep(60*15)
 
 
 def staticBigguyLeftCrawler(params):  #e.g. "2020/11/25"
+
+    # add 0 if needed
+    def addZeroIfNeeded(factor):
+        if (len(str(factor)) < 2):
+            return "0%s" %factor
+        else:
+            return str(factor)
 
     # distinguish day of weeks (0 => Mon; 6 => Sun)
     isWeekdays = getNowDayOfWeek('Asia/Shanghai') < 5
@@ -425,7 +431,7 @@ def staticBigguyLeftCrawler(params):  #e.g. "2020/11/25"
             # Close window
             driver.quit()    
     else:
-        print("Static crawler is pending ... \nWait for %d:%d on weekdays to start" %(startCollectTime.hour, startCollectTime.minute))
+        print("Not crawling time... sleep for 15 mins.")
         time.sleep(60*15)
 
 
@@ -505,6 +511,10 @@ def staticBigIndexCrawler(params):
 
         # Close window
         driver.quit()
+        
+    else:
+        print("Not crawling time... sleep for 15 mins.")
+        time.sleep(60*15)
 
         
 
