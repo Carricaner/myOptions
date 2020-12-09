@@ -10,7 +10,7 @@ function startRedisRefresher() {
             addRealtimeData2Container()
         }
     },
-    6*1000)
+    15*1000*60)
 
     setInterval(() => {
         let TWtimeParams = getNowTime()
@@ -25,8 +25,8 @@ function startRedisRefresher() {
         let TWtimeParams = getNowTime()
         console.log(TWtimeParams)
     },
-    5000)
-
+    1000*5000)
+    
 }
 
 function addRealtimeData2Container() {

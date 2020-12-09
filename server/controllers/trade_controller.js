@@ -10,21 +10,20 @@ const {
 
 
 const buyParts = (req, res) => {
-    const { act, cost, cp, month, number, target, token } = req.body
+    const { act, cost, cp, month, number, target, userId } = req.body
     let moneynprofitId = 0
     let moneyLeft = 0
     let moneySpent = 0
 
-    // 使用者部分還沒有添加 先指定一位
-    sqlGetUserMoneyLeft()
+    sqlGetSpecificUserMoneyLeft(userId)
     .then(result => {
         moneySpent = cost * number * 50
         moneynprofitId = result[0].id
         moneyLeft = result[0].moneyleft
 
-        if (moneySpent < moneyLeft) { // logical的部分記得加手續費
+        if (moneySpent < moneyLeft) { 
             let userPart = {
-                user_id: 38,
+                user_id: userId,
                 prod_target: target,
                 prod_act: act,
                 prod_month: month,
@@ -51,10 +50,9 @@ const buyParts = (req, res) => {
 
 
 const showUserParts = (req, res) => {
-    // const { token } = req.body
+    const { userId } = req.body
 
-    // 假設這邊有使用者為id = 38
-    sqlGetUserLeftParts(38)
+    sqlGetUserLeftParts(userId)
     .then(result => {
         res.send(result)
     })
@@ -63,15 +61,15 @@ const showUserParts = (req, res) => {
 
 
 const updateUserPartsnMoneyLeft = (req, res) => {
-    const { id, userId, nowPrice, profit } = req.body
+    const { partId, userId, number, nowPrice, profit } = req.body
 
     sqlGetSpecificUserMoneyLeft(userId)
     .then(result => {
-        let moneyLeft = result[0].moneyleft + profit
+        let moneyLeft = result[0].moneyleft + nowPrice * 50 * number
         let totalprofit = result[0].totalprofit + profit
         let moneyLeftId = result[0].id
 
-        let updateUserPart = sqlUpdateUserParts([nowPrice, profit, id])
+        let updateUserPart = sqlUpdateUserParts([nowPrice, profit, partId])
         let updateMoneyLeft = sqlUpdateUserMoneyLeft([moneyLeft, totalprofit, moneyLeftId])
         return Promise.all([updateUserPart, updateMoneyLeft])
     })
@@ -84,10 +82,9 @@ const updateUserPartsnMoneyLeft = (req, res) => {
 
 
 const showUserMoneyLeftnTotalprofit = (req, res) => {
-    const { token } = req.body
+    const { userId } = req.body
     
-    // 先指定userId
-    sqlGetSpecificUserMoneyLeft(38)
+    sqlGetSpecificUserMoneyLeft(userId)
     .then(result => {
         let userValue = {
             moneyLeft: result[0].moneyleft,

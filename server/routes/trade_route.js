@@ -13,7 +13,7 @@ router.route('/user/buyParts')
 .post(buyParts)
 
 
-router.route('/user/showParts')
+router.route('/user/showUserParts')
 .post(showUserParts)
 
 

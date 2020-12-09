@@ -35,18 +35,29 @@ const fetchPack = (endPoint, method, body = null) => {
 }
 
 
-// ---------- check authentication ----------
-window.onload = () => {
-    fetchPack('/api/1.0/auth/checkJWT', 'POST', {token: token})
-    .then(result => {
-        if (result.msg == 'valid') {
-            userId = result.payload.userId
-        } else {
-            alert(result.msg)
-            window.location.href = `${protocol}//${domain}` + "/signin.html"
+
+function checkTokenWhileWindowLoad() {
+    return new Promise((resolve, reject) => {
+        window.onload = () => {
+            if (token) {
+                return fetchPack('/api/1.0/auth/checkJWT', 'POST', {token: token})
+                .then(result => {
+                    if (result.msg == 'valid') {
+                        userId = result.payload.userId
+                        resolve({msg: 'valid'})
+                    } else {
+                        alert(result.msg)
+                        window.location.href = `${protocol}//${domain}` + "/signin.html"
+                    }
+                })
+            } else {
+                alert('請先登入')
+                window.location.href = `${protocol}//${domain}` + "/signin.html"
+            }
         }
     })
 }
+
 
 
 // ---------- socket part ----------
@@ -57,7 +68,8 @@ socket.on('realtimeOpt', (receiver) => {
     const tobody4UserPart = document.querySelector('#user-part > div > table > tbody')
     const optDistrs = tbody4OptDis.querySelectorAll('tr')
     const userParttrs = tobody4UserPart.querySelectorAll('tr')
-
+    
+    // display optDis
     for (let i = 0; i < optDistrs.length; i++) {
         let tds = optDistrs[i].querySelectorAll("td")
         for (let j = 0; j < tds.length; j++) {
@@ -67,6 +79,7 @@ socket.on('realtimeOpt', (receiver) => {
         }
     }
 
+    // display userPart profit
     for (let i = 0; i < userParttrs.length; i++) {
         let tds = userParttrs[i].querySelectorAll("td")
         for (let j = 0; j < tds.length; j++) {
@@ -91,30 +104,36 @@ socket.on('realtimeOpt', (receiver) => {
 })
 
 
-// ---------- create items ----------
-// 選擇權報價呈現 & 交易者部位呈現
 
-fetchPack('/api/1.0/realtime/getIndex', 'GET')
+// ---------- check authentication ----------
+checkTokenWhileWindowLoad()
 .then(result => {
+    if (result.msg == 'valid') {
+        return fetchPack('/api/1.0/realtime/getIndex', 'GET')
+    }
+})
+.then(result => {
+    // ---------- render OptDis ----------
     optDis = result.optDis
     let { data } = result.optDis
-
+    
     showOptDisInTable(data, tbody4OptDis)
 
     const btns = document.querySelectorAll("button.buy")
     btns.forEach(btn => {btn.addEventListener("click", clickBuy)})
 
-    return fetchPack('/api/1.0/user/showParts', 'POST', {test: "test"})
+    return fetchPack('/api/1.0/user/showUserParts', 'POST', {userId: userId})
 })
 .then(result => {
     userParts = result
+    // ---------- render User Parts ----------
     showUserPartsInTable(result, tbody4UserPart)
 
     const btns = document.querySelectorAll("button.liquidation")
     btns.forEach(btn => {btn.addEventListener("click", click2LiquidateParts)})
+    
+    return fetchPack('/api/1.0/user/showUserMoneyLeftnTotalprofit', 'POST', {userId: userId})
 })
-
-fetchPack('/api/1.0/user/showUserMoneyLeftnTotalprofit', 'POST', {test: "test"})
 .then(result => {
     const userMoneyLeftDiv = document.querySelector("#money-left")
     showUserMoneyLeftnTotalProfit(result, userMoneyLeftDiv)
@@ -153,7 +172,7 @@ const clickBuy = (e) => {
     let cost = document.querySelector(tableString + `tr:nth-child(${numberOfRow}) > td:nth-child(${costNumber})`)
 
     let carton = {
-        token: "wait real token to be applied",
+        userId: userId,
         target: target,
         act: "buy",
         month: optDis.date,
@@ -161,7 +180,6 @@ const clickBuy = (e) => {
         number: Number(input.value),
         cost: Number(cost.innerText),
     }
-    console.log(carton)
 
     if (Number(input.value) < 1 || Number(input.value) % 1 != 0) {
         alert("輸入格式錯誤，請輸入正整數")
@@ -170,30 +188,33 @@ const clickBuy = (e) => {
         .then(result => {
             if (result.msg == 'success') {
                 alert("購買成功")
+                updateUserMoneynParts(userId)
             } else {
                 alert("餘額不足")
             }
-
-            return fetchPack('/api/1.0/user/showParts', 'POST', {test: "test"})
         })
-        .then(result => {
-            userParts = result
-            const tbody4UserPart = document.querySelector('#user-part > div > table > tbody') 
-            tbody4UserPart.innerHTML = ''
-            showUserPartsInTable(result, tbody4UserPart)
 
-            const btns = document.querySelectorAll("button.liquidation")
-            btns.forEach(btn => {btn.addEventListener("click", click2LiquidateParts)})
+        function updateUserMoneynParts(userId) {
+            fetchPack('/api/1.0/user/showUserParts', 'POST', {userId: userId})
+            .then(result => {
+                userParts = result
+                const tbody4UserPart = document.querySelector('#user-part > div > table > tbody') 
+                tbody4UserPart.innerHTML = ''
+                showUserPartsInTable(result, tbody4UserPart)
 
-            return fetchPack('/api/1.0/user/showUserMoneyLeftnTotalprofit', 'POST', {test: "test"})
-        })
-        .then(result => {
-            const userMoneyLeftDiv = document.querySelector("#money-left")
-            userMoneyLeftDiv.innerHTML = ""
-            showUserMoneyLeftnTotalProfit(result, userMoneyLeftDiv)
-        })
+                const btns = document.querySelectorAll("button.liquidation")
+                btns.forEach(btn => {btn.addEventListener("click", click2LiquidateParts)})
+
+                return fetchPack('/api/1.0/user/showUserMoneyLeftnTotalprofit', 'POST', {userId: userId})
+            })
+            .then(result => {
+                const userMoneyLeftDiv = document.querySelector("#money-left")
+                userMoneyLeftDiv.innerHTML = ""
+                showUserMoneyLeftnTotalProfit(result, userMoneyLeftDiv)
+            })
+        }
+        
     }
-
     input.value = ""
     
 }
@@ -202,23 +223,27 @@ const clickBuy = (e) => {
 const click2LiquidateParts = (e) => {
     const tableString = `#user-part > div > table > tbody > `
     let numberOfRow = e.path[1].rowIndex
-    let id = userParts[numberOfRow-1].id
+    let partId = userParts[numberOfRow-1].id
     let userId = userParts[numberOfRow-1].user_id
+    let number = Number(document.querySelector(tableString + `tr:nth-child(${numberOfRow}) > td:nth-child(5)`).innerText)
     let nowPrice = Number(document.querySelector(tableString + `tr:nth-child(${numberOfRow}) > td:nth-child(7)`).innerText)
     let profit = Number(document.querySelector(tableString + `tr:nth-child(${numberOfRow}) > td:nth-child(8)`).innerText)
 
     let carton = {
-        id: id,
+        partId: partId,
         userId: userId,
+        number: number,
         nowPrice: nowPrice,
         profit: profit
     }
 
+    console.log(carton)
+
     fetchPack('/api/1.0/user/liquidateParts', 'POST', carton)
     .then(result => {
-        console.log(result)
         alert("平倉成功")
-        return fetchPack('/api/1.0/user/showParts', 'POST', {test: "test"})
+        // 下面這坨跟buyPart裡面的function一樣 有空包一包
+        return fetchPack('/api/1.0/user/showUserParts', 'POST', {userId: userId})
     })
     .then(result => {
         userParts = result
@@ -229,7 +254,7 @@ const click2LiquidateParts = (e) => {
         const btns = document.querySelectorAll("button.liquidation")
         btns.forEach(btn => {btn.addEventListener("click", click2LiquidateParts)})
 
-        return fetchPack('/api/1.0/user/showUserMoneyLeftnTotalprofit', 'POST', {test: "test"})
+        return fetchPack('/api/1.0/user/showUserMoneyLeftnTotalprofit', 'POST', {userId: userId})
     })
     .then(result => {
         const userMoneyLeftDiv = document.querySelector("#money-left")
@@ -316,9 +341,20 @@ const showUserMoneyLeftnTotalProfit = (result, div) => {
     const totalProfitContent = document.createElement("h5")
 
     moneyLeftTitle.innerText = '權益數: '
-    moneyLeftContent.innerText = moneyLeft
+
+    if (moneyLeft) {
+        moneyLeftContent.innerText = moneyLeft
+    } else {
+        moneyLeftContent.innerText = 0
+    }
+
     totalProfitTitle.innerText = '總損益: '
-    totalProfitContent.innerText = totalprofit
+    
+    if (totalprofit) {
+        totalProfitContent.innerText = totalprofit
+    } else {
+        totalProfitContent.innerText = 0
+    }
 
     div.appendChild(moneyLeftTitle)
     div.appendChild(moneyLeftContent)

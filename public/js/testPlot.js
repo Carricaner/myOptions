@@ -31,17 +31,20 @@ const fetchPack = (endPoint, method, body = null) => {
 
 // ---------- check authentication ----------
 window.onload = () => {
-    
-    fetchPack('/api/1.0/auth/checkJWT', 'POST', {token: token})
-    .then(result => {
-        if (result.msg == 'valid') {
-            userId = result.payload.userId
-        } else {
-            alert(result.msg)
-            window.location.href = `${protocol}//${domain}` + "/signin.html"
-        }
-    })
-    
+    if (token) {
+        fetchPack('/api/1.0/auth/checkJWT', 'POST', {token: token})
+        .then(result => {
+            if (result.msg == 'valid') {
+                userId = result.payload.userId
+            } else {
+                alert(result.msg)
+                window.location.href = `${protocol}//${domain}` + "/signin.html"
+            }
+        })
+    } else {
+        alert('請先登入')
+        window.location.href = `${protocol}//${domain}` + "/signin.html"
+    }
 }
 
 
