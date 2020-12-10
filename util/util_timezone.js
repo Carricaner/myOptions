@@ -1,6 +1,9 @@
 const { normalizeUnits } = require('moment-timezone');
 var moment = require('moment-timezone');
-
+const { 
+    // choose timezone
+    timezone
+} = process.env;
 
 function getNowTime() {
     let TWtime = moment().tz("Asia/Taipei");
@@ -13,7 +16,16 @@ function getNowTime() {
     let nowMinute =  Number(TWtime.format('mm'))
     let nowSecond =  Number(TWtime.format('ss'))
 
-    let now = new Date(nowInMilliSec)
+    let milliSecCounter = 0
+    if (timezone == 'ohio') {
+        milliSecCounter = nowInMilliSec + 28800000
+    } else {
+        milliSecCounter = nowInMilliSec
+    }
+    // console.log(nowInMilliSec)
+    // console.log(milliSecCounter)
+
+    let now = new Date(milliSecCounter)  // ec2 needs adding 8h!
     let dayOpenTime = new Date(nowYear, nowMonth-1, nowDay, 8, 47, 0)
     let dayCloseTime = new Date(nowYear, nowMonth-1, nowDay, 13, 45, 0)
     let nightOpenTime = new Date(nowYear, nowMonth-1, nowDay, 15, 2, 0)
