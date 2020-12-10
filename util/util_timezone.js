@@ -31,9 +31,9 @@ function getNowTime() {
     let nightOpenTime = new Date(nowYear, nowMonth-1, nowDay, 15, 2, 0)
     let nightCloseTime = new Date(nowYear, nowMonth-1, nowDay, 5, 0, 0)
     let openAfterDayCleanTime = new Date(nowYear, nowMonth-1, nowDay, 14, 30, 0)
-    let closeAfterDayCleanTime = new Date(nowYear, nowMonth-1, nowDay, 14, 32, 0)
+    let closeAfterDayCleanTime = new Date(nowYear, nowMonth-1, nowDay, 14, 31, 0)
     let openAfterNightCleanTime = new Date(nowYear, nowMonth-1, nowDay, 6, 20, 0)
-    let closeAfterNightCleanTime = new Date(nowYear, nowMonth-1, nowDay, 6, 22, 0)
+    let closeAfterNightCleanTime = new Date(nowYear, nowMonth-1, nowDay, 6, 21, 0)
 
     let TWtimeParams = {
         nowInMilliSec: nowInMilliSec + 28800000, // add 8h to be Taipei time

@@ -27,10 +27,17 @@ const sqlInsertUser = (user) => {
 }
 
 
+const sqlCreateANewMoneyLeft = (user) => {
+    return transPromise('INSERT INTO moneynprofit SET ?', user)
+    .then(result => {return result})
+}
+
+
 
 
 module.exports = {
     sqlGetUser,
     sqlGetUserWithSpecificEmail,
     sqlInsertUser,
+    sqlCreateANewMoneyLeft,
 }

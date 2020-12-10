@@ -10,6 +10,7 @@ const {
 const {
     sqlGetUserWithSpecificEmail,
     sqlInsertUser,
+    sqlCreateANewMoneyLeft,
  } = require('../models/user_model')
 
 
@@ -23,9 +24,16 @@ const checkSignUp = (req, res) => {
         password: hash.update(password).digest("hex"),
         localorfb: "local",
     }
+
+    let moneyContainer = {
+        user_id: null,
+        moneyleft: 100000,
+    }
+
     sqlGetUserWithSpecificEmail(email, 'local')
     .then(result => {
         if (!result[0]) {
+
             return sqlInsertUser(container)
         } else {
             return {msg: 'failure'}
@@ -33,6 +41,10 @@ const checkSignUp = (req, res) => {
     })
     .then(result => {
         if (result.insertId) {
+            // create an new account
+            moneyContainer.user_id = result.insertId
+            sqlCreateANewMoneyLeft(moneyContainer)
+            
             const payload = {
                 userId: result.insertId,
                 email: email,
@@ -96,5 +108,4 @@ const checkSignIn = (req, res) => {
 module.exports = {
     checkSignIn,
     checkSignUp,
-
 }
