@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Darren's</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/modern-business.css" rel="stylesheet">
+
+  <!-- Highcharts -->
+  <script src="https://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://code.highcharts.com/stock/modules/data.js"></script>
+  <script src="https://code.highcharts.com/stock/modules/exporting.js"></script> 
+  <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+
+  <!-- Darren's try -->
+  <style media="screen">
+    /* #myoptionsicon {height: 50px; margin: 8px 10px;} */
+  </style>
+  
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <!-- Logo -->
+      <!-- <img src='./property/img/python-icon.png' id="myoptionsicon"> -->
+      <a class="navbar-brand py-3" href="index.html">
+        <img src="./property/img/python-icon.png" width="35" height="35" class="d-inline-block align-top" alt="" loading="lazy">
+        myOptions
+      </a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item mx-3">
+            <a class="nav-link" href="#intro">介紹</a>
+          </li>
+          <li class="nav-item mx-3">
+            <a class="nav-link" href="trade.html">模擬交易</a>
+          </li>
+          <li class="nav-item mx-3">
+            <a class="nav-link" href="contact.html">技術分析</a>
+          </li>
+          <li class="nav-item mx-3">
+            <a class="btn btn-primary" href="about.html">登入 / 註冊</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Banner -->
+  <header>
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+      <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner" role="listbox">
+        <div class="carousel-item active" style="background-image: url('./property/img/16.jpg')">
+          <div class="carousel-caption d-none d-md-block my-5">
+            <h1>Welcome to myOptions</h1>
+            <h5>myOptions 是一個選擇權教學 & 模擬交易的網站</h5>
+          </div>
+        </div>
+        <div class="carousel-item" style="background-image: url('./property/img/21.jpg')">
+          <div class="carousel-caption d-none d-md-block my-5">
+            <a href="#intro" style="text-decoration:none; color:white;">
+              <h1>What is options?</h1>
+              <h5>常聽到玩期權會傾家蕩產? 不妨親自來認識一下選擇權吧!</h5>
+            </a>
+          </div>
+        </div>
+        <div class="carousel-item" style="background-image: url('./property/img/13.jpg')">
+          <div class="carousel-caption d-none d-md-block my-5">
+            <a href="/trade.html" style="text-decoration:none; color:white;">
+              <h1>Mock Trade System</h1>
+              <h5>我們提供虛擬荷包以及即時報價，讓未開戶的你也可以率先嘗試!</h5>
+            </a>
+          </div>
+        </div>
+      </div>
+      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <!-- Row 1 -->
+    <div class="row my-4" id="intro">
+
+      <div class="col-lg-12 text-center mb-4">
+        <h1 class="mt-3">什麼是選擇權 ?</h1>
+        <h4 class="mb-4">一種「未來可以用特定價格買 / 賣商品的權利」</h4>
+      </div>
+      
+      <div class="col-lg-6">
+        <h5>買/賣雙方約定到期日、標的物、履約價格及買賣數量的交易</h5>
+        <p class="my-3">選擇權相關名詞解釋:</p>
+        <ul>
+          <li :marker class="my-2">到期日 = 結清所有選擇權商品的日子</li>
+          <li class="my-2">標的物 = 用來當作買賣雙方看漲跌的依據</li>
+          <li class="my-2">權利金 = 買方先付給賣方的未來商品的訂金</li>
+          <li class="my-2">保證金 = 賣方付給買方的押金</li>
+          <li class="my-2">履約價 = 標的物點數的意思</li>
+        </ul>
+      </div>
+
+      <div class="col-lg-6 mt-5">
+        <table class="table table-bordered font-weight-bold">
+          <caption class="text-right">兩種動作 + 兩種商品 = 交易者兩種預期心理 關係表</caption>
+          <thead class="thead-light">
+            <tr class="text-center">
+              <th scope="col"></th>
+              <th scope="col">買權</th>
+              <th scope="col">賣權</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="text-center">
+              <th scope="row">買方</th>
+              <td class="bg-danger" style="color:white;">預期會漲</td>
+              <td class="bg-success" style="color:white;">預期會跌</td>
+            </tr>
+            <tr class="text-center">
+              <th scope="row">賣方</th>
+              <td class="bg-success" style="color:white;">預期會跌</td>
+              <td class="bg-danger" style="color:white;">預期會漲</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+    
+    <hr>
+    <!-- Row 2 -->
+    <div class="row mt-5">
+
+      <div class="col-lg-12 text-center mb-5">
+        <h1>官方解釋結束..</h1>
+      </div>
+
+      <div class="col-lg-6 mb-3">
+        <h4 class="mb-3">不懂 ? 好吧 ! 以下舉個例子: </h4>
+        <table class="table table-bordered font-weight-bold">
+          <caption class="text-right">阿豐與老闆角色 關係表</caption>
+          <thead class="thead-light">
+            <tr class="text-center">
+              <th scope="col"></th>
+              <th scope="col">阿豐</th>
+              <th scope="col">老闆</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="text-center">
+              <th scope="row">角色</th>
+              <td>買方</td>
+              <td>賣方</td>
+            </tr>
+            <tr class="text-center">
+              <th scope="row">標的物</th>
+              <td colspan="2">排骨酥</td>
+            </tr>
+            <tr class="text-center">
+              <th scope="row">到期日</th>
+              <td colspan="2">一個月後</td>
+            </tr>
+            <tr class="text-center">
+              <th scope="row">預期心理</th>
+              <td>預期會漲</td>
+              <td>預期會跌</td>
+            </tr>
+            <tr class="text-center">
+              <th scope="row">動作</th>
+              <td>購買買權</td>
+              <td>賣出買權</td>
+            </tr>
+            <tr class="text-center">
+              <th scope="row">權利金</th>
+              <td>支付</td>
+              <td>收取</td>
+            </tr>
+            <tr class="text-center">
+              <th scope="row">保證金</th>
+              <td>收取</td>
+              <td>支付</td>
+            </tr>
+            <tr class="text-center">
+              <th scope="row">是否履約</th>
+              <td>可選擇是否履約</td>
+              <td>有義務履約</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-lg-6 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title font-weight-bold mb-4">阿豐以及老闆進行一筆交易</h5>
+            
+            <h6 class="card-subtitle mb-3 text-muted"><b>狀況: </b></h6>
+            <p class="card-text">阿豐是一位排骨酥麵店老闆，每天都需要買50kg的排骨酥。</p>
+            <p class="card-text">由於近期排骨酥價格穩定(100元)，為了確保未來排骨酥價格穩定，阿豐希望在一個月之後依舊用近期穩定的價錢購買到排骨酥。</p>
+            <p class="card-text">因此阿豐與供應商老闆約定好一個月後仍舊用近期的價錢(100元)購買排骨酥。</p>
+            <p class="card-text">阿豐先支付一個月後購買排骨酥的訂金(權利金)，並<b>有權</b>決定一個月後要不要用這個價錢購買排骨酥。</p>
+            <p class="card-text">老闆收取訂金(權利金)，並且<b>有義務</b>在一個月後用這個價錢賣排骨酥給阿豐。</p>
+            <p class="card-text font-weight-bold mb-1" style="color:blue">阿豐心裡 (預期會漲):</p>
+            <p class="card-text font-italic">最近大陸口蹄疫有點嚴重，之後排骨酥價錢也會被牽扯.. 趕快跟老闆簽訂合約固定價格</p>
+            <p class="card-text font-weight-bold mb-1" style="color:red">老闆心裡 (預期會漲):</p>
+            <p class="card-text font-italic">聽人家說最近年輕人都去鄉下開養豬場，豬越來越多，之後豬肉的價格肯定驟降，答應阿豐的要求剛好可以用比較高的價錢敲他一筆嘿嘿...</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-6 mt-5 mb-5">
+        <h4 class="mb-4">讓我們來看看以下的示意圖: </h4>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title text-center font-weight-bold">選擇權買賣方關係圖</h5>
+            <img class="img-fluid rounded card-img-top" width="550" height="550" src="./property/img/expla1.png" alt="">
+          </div>
+          <div class="card-footer text-muted text-right">圖片擷取至 
+            <a href="https://www.sinotrade.com.tw/richclub/futures/%E9%81%B8%E6%93%87%E6%AC%8A%E5%88%B0%E5%BA%95%E6%98%AF%E8%A6%81%E9%81%B8%E6%93%87%E4%BB%80%E9%BA%BC--5ea7edfd0d95d31484fdea35">永豐證券</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 mt-5">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title text-center font-weight-bold">阿豐 & 老闆交易關係圖</h5>
+            <img class="img-fluid rounded card-img-top" width="550" height="550" src="./property/img/expla2.png" alt="">
+          </div>
+          <div class="card-footer text-muted text-right">圖片擷取至 
+            <a href="https://www.sinotrade.com.tw/richclub/futures/%E9%81%B8%E6%93%87%E6%AC%8A%E5%88%B0%E5%BA%95%E6%98%AF%E8%A6%81%E9%81%B8%E6%93%87%E4%BB%80%E9%BA%BC--5ea7edfd0d95d31484fdea35">永豐證券</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-2"></div>
+      <div class="col-lg-8 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title text-center font-weight-bold">未來一個月不同結果雙方損益表現圖</h5>
+            <img class="img-fluid rounded card-img-top" width="550" height="550" src="./property/img/expla3.png" alt="">
+          </div>
+          <div class="card-footer text-muted text-right">圖片擷取至 
+            <a href="https://www.sinotrade.com.tw/richclub/futures/%E9%81%B8%E6%93%87%E6%AC%8A%E5%88%B0%E5%BA%95%E6%98%AF%E8%A6%81%E9%81%B8%E6%93%87%E4%BB%80%E9%BA%BC--5ea7edfd0d95d31484fdea35">永豐證券</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-2"></div>
+
+    </div>
+    
+    <hr>
+    <!-- Row 3 -->
+    <div class="row mt-5">
+
+      <div class="col-lg-12 text-center">
+        <h1>歡迎進入選擇權的世界</h1>
+        <h4 class="mb-4">進行虛擬交易前，點一下不同履約價商品看看損益圖吧 ! </h4>
+        <table class="table table-sm table-bordered font-weight-bold text-center mb-4">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">類別</th>
+              <th scope="col">商品</th>
+              <th scope="col">標的物</th>
+              <th scope="col">目前履約價</th>
+              <th scope="col">動作</th>
+              <th scope="col">數量(口)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>選擇權</td>
+              <td>202812 月選</td>
+              <td>加權指數</td>
+              <td>13875</td>
+              <td>買</td>
+              <td>1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-lg-6 mt-4">
+        <table class="table table-sm table-bordered font-weight-bold text-center table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th class="bg-danger" scope="col" style="color:white;">買權</th>
+              <th scope="col">履約價</th>
+              <th class="bg-success" scope="col" style="color:white;">賣權</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="table-danger buy">196</td>
+              <td class="table-active">13700</td>
+              <td class="table-success buy">8</td>
+            </tr>
+            <tr>
+              <td class="table-danger buy">153</td>
+              <td class="table-active">13750</td>
+              <td class="table-success buy">27</td>
+            </tr>
+            <tr>
+              <td class="table-danger buy">116</td>
+              <td class="table-active">13800</td>
+              <td class="table-success buy">40</td>
+            </tr>
+            <tr>
+              <td class="table-danger buy">86</td>
+              <td class="table-active">13850</td>
+              <td class="table-success buy">59</td>
+            </tr>
+            <tr>
+              <td class="table-danger buy">60</td>
+              <td class="table-active">13900</td>
+              <td class="table-success buy">83</td>
+            </tr>
+            <tr>
+              <td class="table-danger buy">41</td>
+              <td class="table-active">13950</td>
+              <td class="table-success buy">115</td>
+            </tr>
+            <tr>
+              <td class="table-danger buy">27</td>
+              <td class="table-active">14000</td>
+              <td class="table-success buy">150</td>
+            </tr>
+            <tr>
+              <td class="table-danger buy">10</td>
+              <td class="table-active">14050</td>
+              <td class="table-success buy">178</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-lg-6">
+        <div id="plot1"></div>
+      </div>
+
+    </div>
+    
+
+  </div>
+  
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- inner script -->
+  <script src="./js/index.js"></script>
+
+</body>
+  
+</html>

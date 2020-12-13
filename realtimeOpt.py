@@ -3,7 +3,7 @@ from crawler.crawler import realtimeOptCrawler
 
 
 optParams = {
-    'isDay': basicParams['isDay'],
+    'isDay': basicParams['isDay'], 
     'isNight': basicParams['isNight'],
     'isheadless': True,
     'dayOfWeek' : basicParams['dayOfWeek'],

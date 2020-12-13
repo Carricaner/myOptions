@@ -87,7 +87,6 @@ socket.on('futureContainer', (receiver) => {
 Highcharts.setOptions(globaloptions);
 
 
-
 fetch('/api/1.0/realtime/getIndex')
 .then(response => {
     let message = response.json();
