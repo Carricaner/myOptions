@@ -10,13 +10,13 @@ const checkJWT = (req, res) => {
     if (token) {
         jwt.verify(token, token_secret, (err, authData) => {
 			if (err) {
-				res.send({msg: "The token is expired or invalid. Please re-login to access your user information."});
+				res.send({msg: "expire"});
 			} else {
                 res.send({msg: "valid", payload: authData.payload})
             }
         })
     } else {
-        res.send({msg: "Token missing.. redirect to sign-in page."})
+        res.send({msg: "empty"})
     }
 }
     

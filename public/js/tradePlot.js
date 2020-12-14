@@ -69,7 +69,7 @@ var options4bigIndex = {
     series: [{
         name: '大盤指數',
         data: [],
-        color: '#BF0B23',
+        color: '#0066ff',
     }],
     exporting: {
         enabled: false,
@@ -98,7 +98,7 @@ var options4future = {
     series: [{
         name: '台指期',
         data: [],
-        color: '#0EAE0B',
+        color: '#ff6600',
     }],
     exporting: {
         enabled: false,

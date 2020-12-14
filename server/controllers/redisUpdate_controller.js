@@ -55,7 +55,7 @@ function redisContainerUpdate(cacheRealtime, cacheContainer, isBigIndex) {
     let newContainer = JSON.parse(cacheContainer)
     let { date, time, data } = JSON.parse(cacheRealtime)
     let timeString = date + ' ' + time
-    let timestamp = moment.tz(date + ' ' + time, "Asia/Taipei")
+    let timestamp = moment.tz(timeString, "Asia/Taipei")
 
     let switcher = 0
     if (isBigIndex) {

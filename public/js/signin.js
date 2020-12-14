@@ -3,11 +3,11 @@ const domain = window.location.host;
 const protocol = window.location.protocol;
 
 
-const signUpEmailInput = document.querySelector("#sigup > input.email")
-const signUpPasswordInput = document.querySelector("#sigup > input.password")
+const signUpEmailInput = document.querySelector("#sigup > div:nth-child(2) > input")
+const signUpPasswordInput = document.querySelector("#sigup > div:nth-child(3) > input")
 
-const signInEmailInput = document.querySelector("#sigin > input.email")
-const signInPasswordInput = document.querySelector("#sigin > input.password")
+const signInEmailInput = document.querySelector("#sigin > div:nth-child(2) > input")
+const signInPasswordInput = document.querySelector("#sigin > div:nth-child(3) > input")
 
 const signUpBtn = document.querySelector("#sigup > button")
 const signInBtn = document.querySelector("#sigin > button")
@@ -38,9 +38,17 @@ signUpBtn.addEventListener("click", () => {
     let passwordString = signUpPasswordInput.value
 
     if (!isValidEmailAddress(emailString)) {
-        alert("[ Invalid Email ] Please key in another email address.")
+        swal({
+            title: "Invalid Email",
+            text: "請輸入正確格式電子郵件",
+            icon: "error",
+        })
     }else if (passwordString == '') {
-        alert("[ Invalid Pssword ] Password should not be empty.")
+        swal({
+            title: "Invalid Password",
+            text: "密碼不可以為空白",
+            icon: "error",
+        })
     }else {
         let checkInput = {
             email: emailString,
@@ -53,10 +61,20 @@ signUpBtn.addEventListener("click", () => {
                 window.localStorage["Authorization"] = 'Bearer ' + result.token
                 signUpEmailInput.value = ""
                 signUpPasswordInput.value = ""
-                alert("Signup success.")
-                window.location.href = `${protocol}//${domain}` + "/testPlot.html"
+                swal({
+                    title: "Success",
+                    text: "註冊成功",
+                    icon: "success",
+                })
+                .then(result => {
+                    window.location.href = `${protocol}//${domain}` + "/index.html"
+                })
             } else {
-                alert("Email is already registered.")
+                swal({
+                    title: "Invalid Email",
+                    text: "此電子郵件已經被註冊過，請選其他電子郵件註冊",
+                    icon: "error",
+                })
             }
         })
     }
@@ -67,9 +85,17 @@ signInBtn.addEventListener("click", () => {
     let passwordString = signInPasswordInput.value
     
     if (!isValidEmailAddress(emailString)) {
-        alert("[ Invalid Email ] Please key in a proper email address.")
+        swal({
+            title: "Invalid Email",
+            text: "請輸入正確格式電子郵件",
+            icon: "error",
+        })
     }else if (passwordString == '') {
-        alert("[ Invalid Pssword ] Password should not be empty.")
+        swal({
+            title: "Invalid Password",
+            text: "密碼不可以為空白",
+            icon: "error",
+        })
     }else {
         let checkInput = {
             email: emailString,
@@ -82,18 +108,30 @@ signInBtn.addEventListener("click", () => {
                 window.localStorage["Authorization"] = 'Bearer ' + result.token
                 signInEmailInput.value = ""
                 signInPasswordInput.value = ""
-                alert("SignIn success.")
-                window.location.href = `${protocol}//${domain}` + "/testPlot.html"
+                swal({
+                    title: "Success",
+                    text: "登入成功",
+                    icon: "success",
+                })
+                .then(result => {
+                    window.location.href = `${protocol}//${domain}` + "/index.html"
+                })
             } else if (result.msg == 'wrongPassword') {
-                alert("[ Invalid Password ] Password is wrong.")
+                swal({
+                    title: "Invalid Password",
+                    text: "密碼錯誤",
+                    icon: "error",
+                })
             } else if (result.msg == 'invalidEmail') {
-                alert("[ Invalid Email ] Email is wrong.")
+                swal({
+                    title: "Invalid Email",
+                    text: "此電子郵件未註冊",
+                    icon: "error",
+                })
             }
         })
     }
 })
-
-
 
 
 const isValidEmailAddress = (string) => {

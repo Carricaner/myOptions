@@ -1,7 +1,46 @@
+// functions
+const fetchPack = (endPoint, method, body = null) => {
+
+    let option = {
+        headers: {"Content-Type": "application/json"},
+        method: method,
+    }
+
+    if (method == "POST") {
+        option.body = JSON.stringify(body)
+    }
+
+    const fetching = fetch(endPoint, option)
+    .then(response => {
+        let message = response.json()
+        return message;
+    }) 
+
+    return fetching
+}
+
+
+// user recognition
+
+checkTokenWhileWindowLoad()
+.then(result => {
+    const navSignIn = document.querySelector("#navbarResponsive > ul > li:nth-child(4) > a")
+    if (result.msg == 'valid') {
+        navSignIn.textContent = `個人頁面`
+        navSignIn.className = "btn btn-success"
+        navSignIn.href = "profile.html"
+    } else {
+        navSignIn.textContent = `登入 / 註冊`
+        navSignIn.className = "btn btn-primary"
+        navSignIn.href = "signin.html"
+    }
+})
+
+
 // DOM
 const nowTarget = document.querySelector('body > div > div:nth-child(5) > div.col-lg-12.text-center > table > tbody > tr > td:nth-child(4)')
 
-// 頁內轉跳動畫
+// inner href anamation
 $("#navbarResponsive > ul > li:nth-child(1) > a").bind("click touch",function(){
     $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top -90 )},300);
 });
@@ -26,11 +65,6 @@ var options4plot1 = {
         title: {
             text: '損益'
         },
-        // plotLines: [{
-        //     color: '#0d00ff',
-        //     width: 2,
-        //     value: 0,
-        // }],
     },
     series: [{
         name: '這是你的損益',

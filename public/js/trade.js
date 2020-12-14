@@ -66,8 +66,34 @@ socket.on('realtimeOpt', (receiver) => {
 // ---------- check authentication ----------
 checkTokenWhileWindowLoad()
 .then(result => {
-    if (result.msg == 'valid') {
+    const { msg } = result
+    const navSignIn = document.querySelector("#navbarResponsive > ul > li:nth-child(4) > a")
+
+    if (msg == 'valid') {
+        navSignIn.textContent = `個人頁面`
+        navSignIn.className = "btn btn-success"
+        navSignIn.href = "profile.html"
         return fetchPack('/api/1.0/realtime/getIndex', 'GET')
+    } else if (msg == 'expire') {
+        swal({
+            title: "登入逾期",
+            text: "請重新登入",
+            icon: "info",
+            button: "確認"
+        })
+        .then(result => {
+            window.location.href = `${protocol}//${domain}` + "/signin.html"
+        })
+    } else {
+        swal({
+            title: "未能辨別使用者",
+            text: "請先登入",
+            icon: "info",
+            button: "確認"
+        })
+        .then(result => {
+            window.location.href = `${protocol}//${domain}` + "/signin.html"
+        })
     }
 })
 .then(result => {
