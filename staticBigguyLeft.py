@@ -8,7 +8,7 @@ params = {
     'isUpdateMode' : True,   # False => History mode, will retrieve 'fromWhichDay'
     'fromWhichDay' : '2020/11/25',
     'startCollectTime' : datetime.time(16, 30, 0),
-    'endCollectTime' : datetime.time(16, 32, 0),
+    'endCollectTime' : datetime.time(18, 00, 0),
 }
 
 
