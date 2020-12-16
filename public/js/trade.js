@@ -78,7 +78,7 @@ checkTokenWhileWindowLoad()
         swal({
             title: "登入逾期",
             text: "請重新登入",
-            icon: "info",
+            icon: "warning",
             button: "確認"
         })
         .then(result => {
@@ -88,7 +88,7 @@ checkTokenWhileWindowLoad()
         swal({
             title: "未能辨別使用者",
             text: "請先登入",
-            icon: "info",
+            icon: "warning",
             button: "確認"
         })
         .then(result => {
@@ -168,17 +168,39 @@ const clickBuy = (e) => {
         number: Number(input.value),
         cost: Number(cost.innerText),
     }
-
+    
     if (Number(input.value) < 1 || Number(input.value) % 1 != 0) {
-        alert("輸入格式錯誤，請輸入正整數")
+        swal({
+            title: "請輸入正整數",
+            icon: "warning",
+            button: "確認"
+        })
+
+    } else if (Number(cost.innerText) <= 2.5) {
+        swal({
+            title: "交易失敗",
+            text: "偏離目前履約價過遠，歸零風險極大。風險設定為2.5元/口。",
+            icon: "error",
+            button: "確認"
+        })
     } else {
         fetchPack('/api/1.0/user/buyParts', 'POST', carton)
         .then(result => {
             if (result.msg == 'success') {
-                alert("購買成功")
-                updateUserMoneynParts(userId)
+                swal({
+                    title: "購買成功",
+                    icon: "success",
+                    button: "確認"
+                })
+                .then(result => {
+                    updateUserMoneynParts(userId)
+                })
             } else {
-                alert("餘額不足")
+                swal({
+                    title: "餘額不足",
+                    icon: "warning",
+                    button: "確認"
+                })
             }
         })
 
@@ -229,7 +251,11 @@ const click2LiquidateParts = (e) => {
 
     fetchPack('/api/1.0/user/liquidateParts', 'POST', carton)
     .then(result => {
-        alert("平倉成功")
+        swal({
+            title: "平倉成功",
+            icon: "success",
+            button: "確認"
+        })
         // 下面這坨跟buyPart裡面的function一樣 有空包一包
         return fetchPack('/api/1.0/user/showUserParts', 'POST', {userId: userId})
     })

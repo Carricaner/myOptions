@@ -35,7 +35,7 @@ checkTokenWhileWindowLoad()
         swal({
             title: "登入逾期",
             text: "請重新登入",
-            icon: "info",
+            icon: "warning",
             button: "確認"
         })
         .then(result => {
@@ -45,7 +45,7 @@ checkTokenWhileWindowLoad()
         swal({
             title: "未能辨別使用者",
             text: "請先登入",
-            icon: "info",
+            icon: "warning",
             button: "確認"
         })
         .then(result => {

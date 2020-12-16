@@ -18,30 +18,6 @@ from .timeManager import time_in_range, currentTimeGetter, getNowDayOfWeek, curr
 cacheRedis = redis.Redis(host='localhost', port=6379, decode_responses=True)
 # ========================
 
-# sample @@@
-# basicParams = {
-#     'dayBeginTime' : datetime.time(9, 0, 0),
-#     'dayEndTime' : datetime.time(13, 30, 0),
-#     'isDay' : time_in_range(basicParams['dayBeginTime'], basicParams['dayEndTime'], basicParams['currentTime']),
-#     'nightBeginTime' : datetime.time(15, 0, 0),
-#     'nightEndTime' : datetime.time(5, 0, 0),
-#     'isNight' : time_in_range(basicParams['nightBeginTime'], basicParams['nightEndTime'], basicParams['currentTime']),
-#     'currentTime' : currentTimeGetter('Asia/Shanghai'),
-#     'dayOfWeek' : getNowDayOfWeek('Asia/Shanghai'),  # 0 to 6 represents days in a week respectively
-# }
-
-# optParams = {
-#     'isDay': basicParams['isDay'],
-#     'isNight': basicParams['isNight'],
-#     'isheadless': True,
-#     'headless_argu': ['--headless', '--disable-notifications'],
-#     'dayOfWeek' : basicParams['dayOfWeek'],
-#     # If there is a need to record data into SQL, below is needed:
-#     'table' : 'realtime_opt',
-#     'columns' : '(call_var, call_deal, call_sell, call_buy, target, put_buy, put_sell, put_deal, put_var)',
-#     'items' : '(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-# }
-
 
 def realtimeOptCrawler(params):
 
@@ -201,7 +177,7 @@ def staticOptDisCrawler(params):
     curMonth = currentDateGetter('Asia/Shanghai').month
     curDay = currentDateGetter('Asia/Shanghai').day
 
-    # next Month the same day
+    # next Month the same day 
     dayAfterAMonth = currentDateGetter('Asia/Shanghai') + relativedelta(months=1)
     nextYear = dayAfterAMonth.year
     nextMonth = dayAfterAMonth.month
@@ -455,8 +431,18 @@ def staticBigIndexCrawler(params):
     curMonth = currentDateGetter('Asia/Shanghai').month
     curDay = currentDateGetter('Asia/Shanghai').day
 
+    # the same day a year ago
+    dayAYearAgo = currentDateGetter('Asia/Shanghai') - relativedelta(years=1)
+    previousYear = dayAYearAgo.year
+    previousMonth = dayAYearAgo.month
+    previousDay = dayAYearAgo.day
+
     # url
     url = "https://www.twse.com.tw/zh/page/trading/indices/MI_5MINS_HIST.html"
+
+    # print(previousYear)
+    # print(previousMonth)
+    # print(previousDay)
 
     if (isWeekdays and time_in_range(params['startCollectTime'], params['endCollectTime'], curTime)):
         
@@ -474,9 +460,42 @@ def staticBigIndexCrawler(params):
         time.sleep(3)
 
         yearInput = Select(driver.find_element_by_css_selector("#d1 > select:nth-child(1)"))
-        yearInput.select_by_value("%s" %curYear)  
+        yearInput.select_by_value("%s" %previousYear)  
         time.sleep(3)
     
+        for i in range(12):  
+
+            time.sleep(2)
+            monthSelect = Select(driver.find_element_by_css_selector("#d1 > select:nth-child(2)"))
+            monthSelect.select_by_value("%s" %(i+1))
+            time.sleep(2)
+            
+            queryByn = driver.find_element_by_css_selector("#main-form > div > div > form > a")
+            queryByn.click()
+            time.sleep(3)
+
+            print("Year: %s Month: %s Crawled." %(curYear, i+1))
+            page_source = driver.page_source
+            data = parser4staticBigIndex(page_source)
+
+            tupleData = tuple(map(tuple, data))
+
+            #update SQL
+            if (i == 0):
+                flushSQL("ana_bigindex")
+
+            updateSQL(
+                tupleData, 
+                "ana_bigindex", 
+                '(date, open, high, low, close)', 
+                '(%s, %s, %s, %s, %s)',
+                False
+            )
+
+        time.sleep(5)
+        yearInput = Select(driver.find_element_by_css_selector("#d1 > select:nth-child(1)"))
+        yearInput.select_by_value("%s" %curYear)  
+        time.sleep(3)
 
         for i in range(curMonth):  
 
@@ -498,9 +517,6 @@ def staticBigIndexCrawler(params):
             # print("\n")
 
             #update SQL
-            if (i == 0):
-                flushSQL("ana_bigindex")
-
             updateSQL(
                 tupleData, 
                 "ana_bigindex", 
