@@ -41,6 +41,18 @@
     .tableFixHead2 {overflow-y: auto; height: 300px;}
     table.table-bordered > thead > tr > th {border:0px solid white;}
     table.table-bordered > tbody > tr > td {border:0.5px solid lightgrey;}
+    /*flash*/
+    .flashOnce {
+      background-color: #FFFFFF;
+      animation-name: flashOptions;
+      animation-duration: 1.5s;
+      animation-timing-function: ease-out;
+    }
+    @keyframes flashOptions {
+      0% {background-color: #FFFFFF;color:white;}
+      50% {background-color:#ffb600;color:white;}
+      100% {background-color: #FFFFFF;color:black;}
+    }
   </style>
   
 </head>
@@ -52,8 +64,8 @@
     <div class="container">
       <!-- Logo -->
       <!-- <img src='./property/img/python-icon.png' id="myoptionsicon"> -->
-      <a class="navbar-brand py-3" href="index.html">
-        <img src="./property/img/python-icon.png" width="35" height="35" class="d-inline-block align-top" alt="" loading="lazy">
+      <a class="navbar-brand" href="index.html">
+        <img src="https://d2x0i5rb1kbnhn.cloudfront.net/myOptions/myOptions.png" width=70 height=70 class="d-inline-block align-middle" alt="" loading="lazy">
         myOptions
       </a>
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,9 +96,27 @@
 
     <!-- Row 1 -->
     <div class="row mt-5">
-        <div class="col-lg-12 text-center my-4">
-            <div class="card">
-                <h3>這邊會再放一些東西</h3>
+      <div class="col-lg-4 text-center mt-5 mb-3">
+        <ul class="nav justify-content-center flex-column align-items-center mt-3">
+          <h3 class="card-title">快速前往</h3>
+          <li class="nav-item mx-2">
+            <a class="nav-link font-weight-bold" href="#realtimeIndex">即時指數</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link font-weight-bold" href="#realtimePrice">選擇權即時報價</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link font-weight-bold" href="#userParts">部位損益 & 個人資訊</a>
+          </li>
+        </ul>
+      </div>
+        <div class="col-lg-8 text-center mt-5 mb-3">
+            <div class="card h-100">
+              <h3 class="card-title my-3">模擬交易須知: </h3>
+              <h5>1. 目前只提供"購買"行為</h5>
+              <h5>2. 購買時直接搓賣出價，平倉時直接搓買入價，交易立即成立。</h5>
+              <h5>3. 為避免購買離目前履約價太遠的商品，封鎖價格於2.5元/口以下的交易。</h5>
+              <h5>4. 權益數 = 使用者餘額</h5>
             </div>
         </div>
     </div>
@@ -96,7 +126,7 @@
     <!-- Row 2 -->
     <div class="row mt-5" id="realtimeIndex">
       <div class="col-lg-12 text-center">
-        <h3>即時指數</h3>
+        <h3 id="realtimeIndexPart">即時指數</h3>
       </div>
 
       <!-- Index Cards -->
@@ -177,7 +207,7 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr class="table-secondary">
-                            <th>到期月份</th>
+                            <th>購買日期</th>
                             <th>履約價</th>
                             <th>動作</th>
                             <th>c/p</th>
@@ -208,7 +238,7 @@
   <!-- Footer -->
   <footer class="py-5 bg-dark">
     <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+      <p class="m-0 text-center text-white">Copyright &copy; myOptions 2020</p>
     </div>
     <!-- /.container -->
   </footer>

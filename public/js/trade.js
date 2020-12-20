@@ -8,17 +8,35 @@ $('.tableFixHead2').on('scroll', function() {
   $th2.css('transform', 'translateY('+ this.scrollTop +'px)');
 });
 
+// inner href anamation
+$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > ul > li:nth-child(2) > a").bind("click touch",function(){
+    $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top - 120 )},300);
+});
+$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > ul > li:nth-child(3) > a").bind("click touch",function(){
+    $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top - 120 )},400);
+});
+$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > ul > li:nth-child(4) > a").bind("click touch",function(){
+    $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top - 120 )},500);
+});
+
+
+
 // ---------- global data for Trade ----------
 let optDis = 0
 let userParts = 0
 let optDisNameSeq = ['call_var', 'call_deal', 'call_sell', 'call_buy', 'target', 'put_buy', 'put_sell', 'put_deal', 'put_var']
 let userPartsNameSeq = ['prod_month', 'prod_target', 'prod_act', 'prod_cp', 'prod_number', 'prod_cost']
+let isClose = false
 
 const tbody4OptDis = document.querySelector('#optDisTable table tbody')
 const tbody4UserPart = document.querySelector('#user-part > div > table > tbody')
 
+
 // ---------- socket part ----------
 socket.on('realtimeOpt', (receiver) => {
+
+    isClose = tellIfClose(optDis, receiver)
+
     optDis = receiver
     let { date, time, product, data } = receiver
     const tbody4OptDis = document.querySelector('#optDisTable table tbody')
@@ -31,6 +49,9 @@ socket.on('realtimeOpt', (receiver) => {
         let tds = optDistrs[i].querySelectorAll("td")
         for (let j = 0; j < tds.length; j++) {
             if ( 0 < j && j < tds.length-1) {
+                if (tds[j].innerText != "" && tds[j].innerText != data[i][optDisNameSeq[j-1]]) {
+                    flash(tds[j])
+                }
                 tds[j].innerText = data[i][optDisNameSeq[j-1]]
             }
         }
@@ -57,10 +78,7 @@ socket.on('realtimeOpt', (receiver) => {
             }
         }
     }
-
 })
-
-
 
 
 // ---------- check authentication ----------
@@ -125,9 +143,17 @@ checkTokenWhileWindowLoad()
 
 
 
-
-
 // functions
+// flash
+const flash = (DOM) => {
+    DOM.classList.add('flashOnce')
+    setTimeout(()=>{
+        DOM.classList.remove('flashOnce')
+    },
+    2000)
+}
+
+
 const nowPriceGetter = (optDis, target, cp) => {
     for (let i = 0; i < optDis.data.length; i++) {
         if (optDis.data[i].target == target) {
@@ -169,17 +195,22 @@ const clickBuy = (e) => {
         cost: Number(cost.innerText),
     }
     
-    if (Number(input.value) < 1 || Number(input.value) % 1 != 0) {
+    if (isClose) {
+        swal({
+            title: "收盤時間，停止交易",
+            icon: "warning",
+            button: "確認"
+        })
+    } else if (Number(input.value) < 1 || Number(input.value) % 1 != 0) {
         swal({
             title: "請輸入正整數",
             icon: "warning",
             button: "確認"
         })
-
     } else if (Number(cost.innerText) <= 2.5) {
         swal({
             title: "交易失敗",
-            text: "偏離目前履約價過遠，歸零風險極大。風險設定為2.5元/口。",
+            text: "歸零風險極大。風險設定為2.5元/口。",
             icon: "error",
             button: "確認"
         })
@@ -256,7 +287,7 @@ const click2LiquidateParts = (e) => {
             icon: "success",
             button: "確認"
         })
-        // 下面這坨跟buyPart裡面的function一樣 有空包一包
+        // 下面這坨跟clickBuy裡面的function一樣 有空包一包
         return fetchPack('/api/1.0/user/showUserParts', 'POST', {userId: userId})
     })
     .then(result => {
@@ -368,17 +399,23 @@ const showUserMoneyLeftnTotalProfit = (result, div) => {
     moneyLeftTitle.innerText = '權益數: '
 
     if (moneyLeft) {
-        moneyLeftContent.innerText = moneyLeft
+        moneyLeftContent.innerText = 'NT$ ' + moneyLeft
     } else {
-        moneyLeftContent.innerText = 0
+        moneyLeftContent.innerText = 'NT$ ' + 0
     }
 
     totalProfitTitle.innerText = '總損益: '
+    totalProfitTitle.classList.add('mt-3')
     
     if (totalprofit) {
-        totalProfitContent.innerText = totalprofit
+        if (totalprofit > 0) {
+            totalProfitContent.style.color = 'blue'
+        } else if (totalprofit < 0) {
+            totalProfitContent.style.color = 'red'
+        }
+        totalProfitContent.innerText = 'NT$ ' + totalprofit
     } else {
-        totalProfitContent.innerText = 0
+        totalProfitContent.innerText = 'NT$ ' + 0
     }
 
     div.appendChild(moneyLeftTitle)
@@ -388,3 +425,21 @@ const showUserMoneyLeftnTotalProfit = (result, div) => {
 
 } 
 
+
+const tellIfClose = (optDis, receiver) => {
+    
+    let counter = 0
+    for (let i = 0; i < optDis.data.length; i++) {
+        let isTheSameCallSell = optDis.data[i].call_sell == receiver.data[i].call_sell
+        let isTheSamePutSell = optDis.data[i].put_sell == receiver.data[i].put_sell
+        if ( isTheSameCallSell && isTheSamePutSell ) {
+            counter += 1
+        }
+    }
+    if (counter == optDis.data.length) {
+        return true
+    } else {
+        return false
+    }
+    
+}

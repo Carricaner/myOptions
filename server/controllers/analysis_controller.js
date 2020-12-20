@@ -81,17 +81,17 @@ const getStaticBigguyLeft = (req, res) => {
         }
         for (let i = 0; i < result.length; i++) {
             if (!container.dateArray.includes(result[i].date)) {
-                container.dateArray.push(result[i].date)
+                container.dateArray.unshift(result[i].date)
             }
             if (result[i].identity == "自營商") {
-                container.selfArray.push(result[i].left_t_num)
-                container.selfCostArray.push(result[i].left_t_money / result[i].left_t_num * 1000 / 200)
+                container.selfArray.unshift(result[i].left_t_num)
+                container.selfCostArray.unshift(result[i].left_t_money / result[i].left_t_num * 1000 / 200)
             } else if (result[i].identity == "投信") {
-                container.throwArray.push(result[i].left_t_num)
-                container.throwCostArray.push(result[i].left_t_money / result[i].left_t_num * 1000 / 200)
+                container.throwArray.unshift(result[i].left_t_num)
+                container.throwCostArray.unshift(result[i].left_t_money / result[i].left_t_num * 1000 / 200)
             } else if (result[i].identity == "外資") {
-                container.foreignArray.push(result[i].left_t_num)
-                container.foreignCostArray.push(result[i].left_t_money / result[i].left_t_num * 1000 / 200)
+                container.foreignArray.unshift(result[i].left_t_num)
+                container.foreignCostArray.unshift(result[i].left_t_money / result[i].left_t_num * 1000 / 200)
             }
         }
         res.send(container)

@@ -42,10 +42,10 @@ const nowTarget = document.querySelector('body > div > div:nth-child(5) > div.co
 
 // inner href anamation
 $("#navbarResponsive > ul > li:nth-child(1) > a").bind("click touch",function(){
-    $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top -90 )},300);
+    $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top -110 )},300);
 });
 $("#carouselExampleIndicators > div > div:nth-child(2) > div > a").bind("click touch",function(){
-    $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top -90 )},300);
+    $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top -110 )},300);
 });
 
 // Highchart

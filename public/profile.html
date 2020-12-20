@@ -13,6 +13,9 @@
   <!-- sweetAlert -->
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+  <!-- popover -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -20,7 +23,7 @@
   <link href="css/modern-business.css" rel="stylesheet">
 
   <!-- Highcharts -->
-  <script src="https://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
   <script src="https://code.highcharts.com/stock/modules/data.js"></script>
   <script src="https://code.highcharts.com/stock/modules/exporting.js"></script> 
   <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
@@ -28,6 +31,53 @@
   <!-- Darren's try -->
   <style media="screen">
     /* #myoptionsicon {height: 50px; margin: 8px 10px;} */
+    #tooltip {
+      background: #333;
+      color: white;
+      font-weight: bold;
+      padding: 4px 8px;
+      font-size: 13px;
+      border-radius: 4px;
+      display: none;
+    }
+
+    #tooltip[data-show] {
+      display: block;
+    }
+
+    #arrow,
+    #arrow::before {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      z-index: -1;
+    }
+
+    #arrow::before {
+      content: '';
+      transform: rotate(45deg);
+      background: #333;
+    }
+
+    #tooltip[data-popper-placement^='top'] > #arrow {
+      bottom: -4px;
+    }
+
+    #tooltip[data-popper-placement^='bottom'] > #arrow {
+      top: -4px;
+    }
+
+    #tooltip[data-popper-placement^='left'] > #arrow {
+      right: -4px;
+    }
+
+    #tooltip[data-popper-placement^='right'] > #arrow {
+      left: -4px;
+    }
+
+    .badge {
+      background-color:#a7c957;
+    }
   </style>
   
 </head>
@@ -39,8 +89,8 @@
     <div class="container">
       <!-- Logo -->
       <!-- <img src='./property/img/python-icon.png' id="myoptionsicon"> -->
-      <a class="navbar-brand py-3" href="index.html">
-        <img src="./property/img/python-icon.png" width="35" height="35" class="d-inline-block align-top" alt="" loading="lazy">
+      <a class="navbar-brand" href="index.html">
+        <img src="https://d2x0i5rb1kbnhn.cloudfront.net/myOptions/myOptions.png" width=70 height=70 class="d-inline-block align-middle" alt="" loading="lazy">
         myOptions
       </a>
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +108,7 @@
             <a class="nav-link" href="analysis.html">技術分析</a>
           </li>
           <li class="nav-item mx-3">
-            <a class="btn btn-outline-secondary" href="#">登入</a>
+            <a class="btn btn-danger" href="#">登出</a>
           </li>
         </ul>
       </div>
@@ -70,13 +120,116 @@
   <!-- Page Content -->
   <div class="container">
 
-    <div class="col-lg-12 my-5"><br></div>
-    <div class="col-lg-12 my-5 text-center">
-      <h1>3332661531351351131</h1>
-      
-      
+    <div class="col-lg-12 mt-3 mb-4"><br></div>
+    
+    <div class="row row-cols-4 my-3 text-center">
+      <div class="col-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h3 class="card-title">myOptions Panel</h3>
+            <h6 class="card-subtitle mb-3 text-muted">個人資訊</h6>
+            <h5 class="card-text mb-3" id="email">E-mail: </h5>
+            <h5 class="card-text" id="registerTime">註冊時間: </h5>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body">
+            <h4 class="card-title my-3">可動用權益數
+              <span id="fluidbadge" class="badge badge rounded-pill text-dark" aria-describedby="tooltip">Info</span>
+              <div id="tooltip" role="tooltip">
+                簡單來說就是"餘額"
+                <div id="arrow" data-popper-arrow></div>
+              </div>
+            </h4>
+            <h4 class="card-title my-4" id="moneyLeft">0</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body">
+            <h4 class="card-title my-3">總損益
+              <span id="totalBenefitbadge" class="badge badge rounded-pill text-dark" aria-describedby="tooltip">Info</span>
+              <div id="tooltip" role="tooltip">
+                總共賺多少的意思
+                <div id="arrow" data-popper-arrow></div>
+              </div>
+            </h4>
+            <h4 class="card-title my-4" id="totalProfit">0</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row row-cols-4 my-4 text-center">
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body">
+            <h4 class="card-title my-3">最高單次獲利</h4>
+            <h4 class="card-title my-4" id="highProfit">0</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body">
+            <h4 class="card-title my-3">平均報酬率
+              <span id="returnbadge" class="badge badge rounded-pill text-dark" aria-describedby="tooltip">Info</span>
+              <div id="tooltip" role="tooltip">
+                總損益/付出成本
+                <div id="arrow" data-popper-arrow></div>
+              </div>
+            </h4>
+            <h4 class="card-title my-4" id="averageProfit">0</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body">
+            <h4 class="card-title my-3">勝率
+              <span id="winRatebadge" class="badge badge rounded-pill text-dark" aria-describedby="tooltip">Info</span>
+              <div id="tooltip" role="tooltip">
+                正損益次數總/交易次數
+                <div id="arrow" data-popper-arrow></div>
+              </div>
+            </h4>
+            <h4 class="card-title my-4" id="winRate">0</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body">
+            <h4 class="card-title my-3">交易次數</h4>
+            <h4 class="card-title my-4" id="tradeTimes">0</h4>
+          </div>
+        </div>
+      </div>
     </div>
     
+
+    <div class="row row-cols-2 my-4 text-center">
+      <div class="col-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h4 class="card-title my-3">買權 v.s. 賣權</h4>
+            <div class="card-text" id="cpRate"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-8">
+        <div class="card h-100">
+          <div class="card-body">
+            <h4 class="card-title my-3">個人數據統計</h4>
+            <div class="card-text" id="performance"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
   </div>
   
@@ -84,7 +237,7 @@
   <!-- Footer -->
   <footer class="py-5 bg-dark">
     <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+      <p class="m-0 text-center text-white">Copyright &copy; myOptions 2020</p>
     </div>
     <!-- /.container -->
   </footer>
@@ -94,7 +247,7 @@
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <!-- inner script -->
   <script src="./js/auth.js"></script>
-  <script src="./js/index.js"></script>
+  <script src="./js/profile.js"></script>
 
 </body>
   

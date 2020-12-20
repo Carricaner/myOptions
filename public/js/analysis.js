@@ -111,8 +111,8 @@ var options4BigIndex = {
     },
     plotOptions: {
         candlestick: {
-            color: '#4ca64c',
-            upColor: '#cc0000'
+            color: '#6a994e',
+            upColor: '#ba2d0b'
         }
     },
     series: [{
@@ -215,12 +215,12 @@ var options4OptDis = {
         {
             name: 'Call(買權)',
             data: [],
-            color: '#cc0000'
+            color: '#ba2d0b'
         },
         {
             name: 'Put(賣權)',
             data: [],
-            color: '#4ca64c',
+            color: '#6a994e',
         }
     ]
 }
@@ -265,15 +265,18 @@ var options4BigguyLeft = {
     series: [
         {
             name: '外資',
-            data: []
+            data: [],
+            color: "#23395b",
         },
         {
             name: '自營商',
-            data: []
+            data: [],
+            color: "#406e8e",
         },
         {
             name: '投信',
-            data: []
+            data: [],
+            color: "#8ea8c3",
         },
     ]
 }
@@ -317,15 +320,18 @@ var options4BigguyCost = {
     series: [
         {
             name: '外資',
-            data: []
+            data: [],
+            color: "#23395b",
         },
         {
             name: '自營商',
-            data: []
+            data: [],
+            color: "#406e8e",
         },
         {
             name: '投信',
-            data: []
+            data: [],
+            color: "#8ea8c3",
         },
     ]
 }
@@ -337,3 +343,19 @@ var staticOptDis = Highcharts.chart('plot2', options4OptDis)
 var staticBigguyLeft = Highcharts.chart('plot3', options4BigguyLeft)
 
 var staticBigguyCost = Highcharts.chart('plot4', options4BigguyCost)
+
+
+
+// inner href anamation
+$("body > div > ul > li:nth-child(1) > a").bind("click touch",function(){
+    $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top - 120 )},300);
+});
+$("body > div > ul > li:nth-child(2) > a").bind("click touch",function(){
+    $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top - 120 )},400);
+});
+$("body > div > ul > li:nth-child(3) > a").bind("click touch",function(){
+    $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top - 120 )},700);
+});
+$("body > div > ul > li:nth-child(4) > a").bind("click touch",function(){
+    $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top - 120 )},800);
+});

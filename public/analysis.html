@@ -39,9 +39,8 @@
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
       <!-- Logo -->
-      <!-- <img src='./property/img/python-icon.png' id="myoptionsicon"> -->
-      <a class="navbar-brand py-3" href="index.html">
-        <img src="./property/img/python-icon.png" width="35" height="35" class="d-inline-block align-top" alt="" loading="lazy">
+      <a class="navbar-brand" href="index.html">
+        <img src="https://d2x0i5rb1kbnhn.cloudfront.net/myOptions/myOptions.png" width=70 height=70 class="d-inline-block align-middle" alt="" loading="lazy">
         myOptions
       </a>
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,25 +69,42 @@
   <!-- Page Content -->
   <div class="container">
 
+    <div class="col-lg-12 my-3"><br></div>
+
+    <ul class="nav nav-tabs justify-content-center mt-5">
+      <li class="nav-item mx-1">
+        <a class="nav-link font-weight-bold" href="#bigIndex">加權指數(K線)</a>
+      </li>
+      <li class="nav-item mx-1">
+        <a class="nav-link font-weight-bold" href="#optDis">前日選擇權各履約價留倉分布</a>
+      </li>
+      <li class="nav-item mx-1">
+        <a class="nav-link font-weight-bold" href="#bigguyLeftNum">外資、自營商及投信期貨留倉口數</a>
+      </li>
+      <li class="nav-item mx-1 mb-3">
+        <a class="nav-link font-weight-bold" href="#bigguyLeftCost">外資、自營商及投信期貨平均成本</a>
+      </li>
+    </ul>
+
     <div class="col-lg-12 my-5 text-center">
         <div class="card">
-            <h3 class="my-4">加權指數(K線)</h3>
+            <h3 class="my-4" id="bigIndex">加權指數(K線)</h3>
             <div id="plot1"></div>
         </div>
     </div>
     <hr>
     <div class="col-lg-12 my-5 text-center">
         <div class="card">
-            <h3 class="my-4">前日選擇權各履約價留倉分布</h3>
+            <h3 class="my-4" id="optDis">前日選擇權各履約價留倉分布</h3>
             <div id="plot2" style="height:1000px;"></div>
         </div>
     </div>
     <hr>
     <div class="col-lg-12 my-5 text-center">
         <div class="card">
-            <h3 class="my-4">外資、自營商及投信期貨留倉口數</h3>
+            <h3 class="my-4" id="bigguyLeftNum">外資、自營商及投信期貨留倉口數</h3>
             <div id="plot3"></div>
-            <h3 class="my-4">外資、自營商及投信期貨平均成本</h3>
+            <h3 class="my-4" id="bigguyLeftCost">外資、自營商及投信期貨平均成本</h3>
             <div id="plot4"></div>
         </div>
     </div>
@@ -99,7 +115,7 @@
   <!-- Footer -->
   <footer class="py-5 bg-dark">
     <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+      <p class="m-0 text-center text-white">Copyright &copy; myOptions 2020</p>
     </div>
     <!-- /.container -->
   </footer>

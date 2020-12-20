@@ -12,6 +12,8 @@ const signInPasswordInput = document.querySelector("#sigin > div:nth-child(3) > 
 const signUpBtn = document.querySelector("#sigup > button")
 const signInBtn = document.querySelector("#sigin > button")
 
+
+
 const fetchPack = (endPoint, method, body = null) => {
 
     let option = {
@@ -80,6 +82,7 @@ signUpBtn.addEventListener("click", () => {
     }
 })
 
+
 signInBtn.addEventListener("click", () => {
     let emailString = signInEmailInput.value
     let passwordString = signInPasswordInput.value
@@ -142,5 +145,7 @@ const isValidEmailAddress = (string) => {
         return true
     }
 }
+
+
 
 
