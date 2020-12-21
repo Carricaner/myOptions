@@ -43,6 +43,7 @@ function getNowTime() {
         nowHour: nowHour, 
         nowMinute: nowMinute, 
         nowSecond: nowSecond, 
+        dateOfWeek: TWtime.weekday(), // 0 is Sunday
         isDay : dayOpenTime < now && now < dayCloseTime,
         isNight : nightOpenTime < now || now < nightCloseTime,
         isafterDayCleanTime: openAfterDayCleanTime < now && now < closeAfterDayCleanTime,
@@ -50,6 +51,8 @@ function getNowTime() {
     }
     return TWtimeParams
 }
+
+
 module.exports = {
     getNowTime
 }

@@ -1,5 +1,6 @@
 const io = require('socket.io')
-const { redisClient, redisGet } = require("./util_redis")
+const { redisClient } = require("./util_redis")
+const { getNowTime } = require("./util_timezone")
 var moment = require('moment-timezone');
 
 
@@ -33,6 +34,12 @@ const deploySocket = (server) => {
                     JSON.parse(value)
                 )
             })
+
+            // 統一時間
+            socket.emit(
+                'time',
+                getNowTime()
+            )
 
         }, 5*1000);
 

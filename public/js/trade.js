@@ -8,6 +8,7 @@ $('.tableFixHead2').on('scroll', function() {
   $th2.css('transform', 'translateY('+ this.scrollTop +'px)');
 });
 
+
 // inner href anamation
 $("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > ul > li:nth-child(2) > a").bind("click touch",function(){
     $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top - 120 )},300);
@@ -26,7 +27,8 @@ let optDis = 0
 let userParts = 0
 let optDisNameSeq = ['call_var', 'call_deal', 'call_sell', 'call_buy', 'target', 'put_buy', 'put_sell', 'put_deal', 'put_var']
 let userPartsNameSeq = ['prod_month', 'prod_target', 'prod_act', 'prod_cp', 'prod_number', 'prod_cost']
-let isClose = false
+let isOpen = false
+
 
 const tbody4OptDis = document.querySelector('#optDisTable table tbody')
 const tbody4UserPart = document.querySelector('#user-part > div > table > tbody')
@@ -77,6 +79,22 @@ socket.on('realtimeOpt', (receiver) => {
                 }
             }
         }
+    }
+})
+
+socket.on('time', (receiver) => {
+    let {
+        dateOfWeek,
+        isDay,
+        isNight,
+        nowHour,
+    } = receiver
+
+    const weekdaysArray = [1, 2, 3, 4, 5]
+    let isOpenOnWeedays = weekdaysArray.includes(receiver.dateOfWeek) && isDay && isNight
+    let isOpenOnSaturday = dateOfWeek == 6 && nowHour <= 5
+    if (isOpenOnWeedays || isOpenOnSaturday) {
+        isOpen = true
     }
 })
 
@@ -195,7 +213,7 @@ const clickBuy = (e) => {
         cost: Number(cost.innerText),
     }
     
-    if (isClose) {
+    if (!isOpen) {
         swal({
             title: "收盤時間，停止交易",
             icon: "warning",
@@ -424,22 +442,3 @@ const showUserMoneyLeftnTotalProfit = (result, div) => {
     div.appendChild(totalProfitContent)
 
 } 
-
-
-const tellIfClose = (optDis, receiver) => {
-    
-    let counter = 0
-    for (let i = 0; i < optDis.data.length; i++) {
-        let isTheSameCallSell = optDis.data[i].call_sell == receiver.data[i].call_sell
-        let isTheSamePutSell = optDis.data[i].put_sell == receiver.data[i].put_sell
-        if ( isTheSameCallSell && isTheSamePutSell ) {
-            counter += 1
-        }
-    }
-    if (counter == optDis.data.length) {
-        return true
-    } else {
-        return false
-    }
-    
-}

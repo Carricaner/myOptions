@@ -33,19 +33,6 @@ const fetchPack = (endPoint, method, body = null) => {
 }
 
 // Highchart
-// chart globle srtting
-// var globaloptions = {
-//     chart: {
-//         backgroundColor: {
-//             // linearGradient: [0, 0, 500, 500],
-//         },
-//         borderWidth: 1,
-//         plotBackgroundColor: '#ffffff',
-//         plotShadow: true,
-//         plotBorderWidth: 1
-//     }
-// }
-// Highcharts.setOptions(globaloptions);
 
 var options4bigIndex = {
     chart: {
