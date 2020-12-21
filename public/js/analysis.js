@@ -81,7 +81,6 @@ fetchPack('/api/1.0/analysis/getStaticOptDis')
 
 fetchPack('/api/1.0/analysis/getStaticBigguyLeft')
 .then(result => {
-    console.log(result)
     // update options
     staticBigguyLeft.update({
         xAxis:{categories: result.dateArray},
@@ -127,7 +126,7 @@ var options4BigIndex = {
                 ],
                 [
                     'month',
-                    [1, 3, 6]
+                    [1, 3]
                 ]
             ]
         }

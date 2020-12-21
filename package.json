@@ -19,6 +19,7 @@
   "homepage": "https://github.com/darrenli1256/myOptions#readme",
   "dependencies": {
     "apexcharts": "^3.22.2",
+    "artillery": "^1.6.1",
     "aws-cli": "0.0.2",
     "aws-sdk": "^2.799.0",
     "axios": "^0.21.0",

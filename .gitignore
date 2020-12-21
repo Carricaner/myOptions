@@ -21,3 +21,7 @@ debug.log
 #experiment
 /experiment
 testSQL.py
+
+
+#yml => load test
+*.yml

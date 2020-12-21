@@ -109,7 +109,7 @@ def parser4staticOptDis(page_source, curYear, curMonth, curDay, nextYear, nextMo
     for tr in trs:
 
         if (trCounter not in notCrawlColumns):          
-            twoConsecutiveMonthProduct = ["%s%s" %(curYear, curMonth), "%s%s" %(nextYear, nextMonth)]
+            twoConsecutiveMonthProduct = ["%s%s" %(curYear, addZeroIfNeeded(curMonth)), "%s%s" %(nextYear, addZeroIfNeeded(nextMonth))]
             tempArray = ["%s%s%s" %(curYear, addZeroIfNeeded(curMonth), addZeroIfNeeded(curDay))]
             designatedColumns = [1, 2, 3, 4, 8, 9, 10, 14, 15]
             tds = tr.select("td")

@@ -25,7 +25,7 @@ const getStaticBigIndex = (req, res) => {
             tempArray.push(Number(result[i].high))
             tempArray.push(Number(result[i].low))
             tempArray.push(Number(result[i].close))
-            dataSeries.push(tempArray)
+            dataSeries.unshift(tempArray)
         }
 
         res.send({dataSeries})
