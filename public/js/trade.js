@@ -37,8 +37,6 @@ const tbody4UserPart = document.querySelector('#user-part > div > table > tbody'
 // ---------- socket part ----------
 socket.on('realtimeOpt', (receiver) => {
 
-    isClose = tellIfClose(optDis, receiver)
-
     optDis = receiver
     let { date, time, product, data } = receiver
     const tbody4OptDis = document.querySelector('#optDisTable table tbody')
