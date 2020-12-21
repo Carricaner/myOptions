@@ -89,8 +89,10 @@ socket.on('time', (receiver) => {
     } = receiver
 
     const weekdaysArray = [1, 2, 3, 4, 5]
-    let isOpenOnWeedays = weekdaysArray.includes(receiver.dateOfWeek) && isDay && isNight
+    let isTradeTime = isDay || isNight
+    let isOpenOnWeedays = weekdaysArray.includes(receiver.dateOfWeek) && isTradeTime
     let isOpenOnSaturday = dateOfWeek == 6 && nowHour <= 5
+
     if (isOpenOnWeedays || isOpenOnSaturday) {
         isOpen = true
     }
