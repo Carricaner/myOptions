@@ -291,7 +291,7 @@ def staticBigguyLeftCrawler(params):  #e.g. "2020/11/25"
 
         dateInput = driver.find_element_by_css_selector("#queryDate")
         dateInput.clear()
-        todayString = "%s/%s/%s" %(addZeroIfNeeded(curYear), addZeroIfNeeded(curMonth), addZeroIfNeeded(curDay))
+        todayString = "%s/%s/%s" %(curYear, addZeroIfNeeded(curMonth), addZeroIfNeeded(curDay))
 
         contractSelect = Select(driver.find_element_by_css_selector("#commodityId"))
         contractSelect.select_by_value("TXF")
@@ -347,36 +347,14 @@ def staticBigguyLeftCrawler(params):  #e.g. "2020/11/25"
 
             while (isSthLeftToCrawled):
                 
-                dateInput = driver.find_element_by_css_selector("#queryDate")
-                dateStringInTheCurrentPage = dateInput.get_attribute("value").strip()
+                try:
+                    dateInput = driver.find_element_by_css_selector("#queryDate")
+                    dateStringInTheCurrentPage = dateInput.get_attribute("value").strip()
 
-                page_source = driver.page_source
-                if (dateStringInTheCurrentPage == todayString):
-                    print("It is the last page.")
-                    #crawl the page
-                    data = parser4staticBigguyLeft(page_source, dateStringInTheCurrentPage)
-                    tupleData = tuple(map(tuple, data))
-                    # print(tupleData)
-                    # print("\n")
+                    page_source = driver.page_source
 
-                    #update SQL
-                    updateSQL(
-                        tupleData, 
-                        "ana_bigguyfs", 
-                        '(date, identity, trade_m_num, trade_m_money, trade_l_num, trade_l_money, trade_t_num, trade_t_money, left_m_num, left_m_money, left_l_num, left_l_money, left_t_num, left_t_money)', 
-                        '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                        False
-                    )
-
-                    isSthLeftToCrawled = False
-                else:
-                    #flushall SQL data once only
-                    if (dateStringInTheCurrentPage == params['fromWhichDay']):
-                        flushSQL("ana_bigguyfs")
-
-                    try:
-                        tableTeller = driver.find_element_by_css_selector("#printhere > div:nth-child(4) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(4) > td:nth-child(4) > div:nth-child(1) > font")
-                        print("The page is crawlable.")
+                    if (dateStringInTheCurrentPage == todayString):
+                        print("It is the last page.")
                         #crawl the page
                         data = parser4staticBigguyLeft(page_source, dateStringInTheCurrentPage)
                         tupleData = tuple(map(tuple, data))
@@ -392,14 +370,43 @@ def staticBigguyLeftCrawler(params):  #e.g. "2020/11/25"
                             False
                         )
 
-                        nextPageBtn = driver.find_element_by_css_selector("#button4")
-                        nextPageBtn.click()
-                        time.sleep(5)
+                        isSthLeftToCrawled = False
+                    else:
+                        #flushall SQL data once only
+                        if (dateStringInTheCurrentPage == params['fromWhichDay']):
+                            flushSQL("ana_bigguyfs")
 
-                    except:
-                        nextPageBtn = driver.find_element_by_css_selector("#button4")
-                        nextPageBtn.click()
-                        time.sleep(5)
+                        try:
+                            tableTeller = driver.find_element_by_css_selector("#printhere > div:nth-child(4) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(4) > td:nth-child(4) > div:nth-child(1) > font")
+                            print("The page is crawlable.")
+                            #crawl the page
+                            data = parser4staticBigguyLeft(page_source, dateStringInTheCurrentPage)
+                            tupleData = tuple(map(tuple, data))
+                            # print(tupleData)
+                            # print("\n")
+
+                            #update SQL
+                            updateSQL(
+                                tupleData, 
+                                "ana_bigguyfs", 
+                                '(date, identity, trade_m_num, trade_m_money, trade_l_num, trade_l_money, trade_t_num, trade_t_money, left_m_num, left_m_money, left_l_num, left_l_money, left_t_num, left_t_money)', 
+                                '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                                False
+                            )
+
+                            nextPageBtn = driver.find_element_by_css_selector("#button4")
+                            nextPageBtn.click()
+                            time.sleep(5)
+
+                        except:
+
+                            nextPageBtn = driver.find_element_by_css_selector("#button4")
+                            nextPageBtn.click()
+                            time.sleep(5)
+                
+                except:
+                    print("Today's data is not available. Closing the browser.")
+                    isSthLeftToCrawled = False
 
 
             time.sleep(3)
