@@ -26,7 +26,7 @@ function getNowTime() {
     // console.log(milliSecCounter)
 
     let now = new Date(milliSecCounter)  // ec2 needs adding 8h!
-    let dayOpenTime = new Date(nowYear, nowMonth-1, nowDay, 8, 48, 0)
+    let dayOpenTime = new Date(nowYear, nowMonth-1, nowDay, 8, 55, 0)
     let dayCloseTime = new Date(nowYear, nowMonth-1, nowDay, 13, 45, 0)
     let nightOpenTime = new Date(nowYear, nowMonth-1, nowDay, 15, 4, 0)
     let nightCloseTime = new Date(nowYear, nowMonth-1, nowDay, 5, 0, 0)
