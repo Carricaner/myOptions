@@ -6,9 +6,9 @@ const sqlGetStaticBigIndex = () => {
     .then(result => {return result.result})
 }
 
-// 有兩個月的部位
+// 有兩個月的部位 => 只挑第一個月選
 const sqlGetStaticOptDis = () => {
-    return transPromise('SELECT * FROM ana_optdis')
+    return transPromise('SELECT * FROM ana_optdis WHERE duetime = (SELECT duetime FROM ana_optdis ORDER BY id ASC LIMIT 1)')
     .then(result => {return result.result})
 }
 
