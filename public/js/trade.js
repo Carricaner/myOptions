@@ -10,13 +10,13 @@ $('.tableFixHead2').on('scroll', function() {
 
 
 // inner href anamation
-$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > ul > li:nth-child(2) > a").bind("click touch",function(){
+$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(2) > a").bind("click touch",function(){
     $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top - 120 )},300);
 });
-$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > ul > li:nth-child(3) > a").bind("click touch",function(){
+$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(3) > a").bind("click touch",function(){
     $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top - 120 )},400);
 });
-$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > ul > li:nth-child(4) > a").bind("click touch",function(){
+$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(4) > a").bind("click touch",function(){
     $('html,body').animate({scrollTop: ($($(this).attr('href')).offset().top - 120 )},500);
 });
 
