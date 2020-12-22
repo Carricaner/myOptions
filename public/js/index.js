@@ -30,7 +30,7 @@ checkTokenWhileWindowLoad()
         navSignIn.className = "btn btn-success"
         navSignIn.href = "profile.html"
     } else {
-        navSignIn.textContent = `登入 / 註冊`
+        navSignIn.textContent = `註冊 / 登入`
         navSignIn.className = "btn btn-primary"
         navSignIn.href = "signin.html"
     }
