@@ -1,8 +1,7 @@
-// let access_token = window.localStorage["Authorization"];
 const domain = window.location.host;
 const protocol = window.location.protocol;
 
-
+// global
 const signUpEmailInput = document.querySelector("#sigup > div:nth-child(2) > input")
 const signUpPasswordInput = document.querySelector("#sigup > div:nth-child(3) > input")
 
@@ -42,7 +41,13 @@ signUpBtn.addEventListener("click", () => {
     if (!isValidEmailAddress(emailString)) {
         swal({
             title: "Invalid Email",
-            text: "請輸入正確格式電子郵件",
+            text: "請輸入正確電子郵件格式",
+            icon: "error",
+        }) 
+    } else if (!checkVal(passwordString)) {
+        swal({
+            title: "Invalid Password",
+            text: "密碼需為英文字母或數字組合",
             icon: "error",
         })
     }else if (passwordString == '') {
@@ -147,5 +152,69 @@ const isValidEmailAddress = (string) => {
 }
 
 
+const checkVal = (str) => {
+    var regExp = /^[\d|a-zA-Z]+$/;
+    if (regExp.test(str))
+        return true;
+    else
+        return false;
+}
 
+
+//  ---------- popovers ----------
+// for Popovers
+const userInfo = document.querySelector('#userInfo')
+const tooltip = document.querySelectorAll('#tooltip');
+
+const DOMarr = [
+    [userInfo, tooltip[0]],
+]
+
+const showEvents = ['mouseenter', 'focus'];
+const hideEvents = ['mouseleave', 'blur'];
+
+let popperInstance = null;
+
+function create(badge, tooltip) {
+popperInstance = Popper.createPopper(
+    badge, 
+    tooltip,
+    {
+    placement: 'bottom',
+    modifiers: [
+        {
+        name: 'offset',
+        options: {
+            offset: [0, 8],
+        },
+        },
+    ],
+    }
+);
+}
+
+function destroy() {
+if (popperInstance) {
+    popperInstance.destroy();
+    popperInstance = null;
+}
+}
+
+showEvents.forEach(event => {
+DOMarr.forEach(DOM => {
+    DOM[0].addEventListener(event, () => {
+    DOM[1].setAttribute('data-show', '');
+    create(DOM[0], DOM[1]);
+    });
+})
+});
+
+hideEvents.forEach(event => {
+DOMarr.forEach(DOM => {
+    DOM[0].addEventListener(event, () => {
+    DOM[1].removeAttribute('data-show');
+    destroy();
+    });
+})
+});
 

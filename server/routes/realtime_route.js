@@ -9,12 +9,4 @@ router.route('/realtime/getIndex')
 
 
 
-
-
-
-
-
-
-
-
 module.exports = router;

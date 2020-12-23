@@ -32,7 +32,7 @@ let isOpen = false
 
 const tbody4OptDis = document.querySelector('#optDisTable table tbody')
 const tbody4UserPart = document.querySelector('#user-part > div > table > tbody')
-
+const userPartsRegion = document.querySelector("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(4) > a")
 
 // ---------- socket part ----------
 socket.on('realtimeOpt', (receiver) => {
@@ -48,11 +48,22 @@ socket.on('realtimeOpt', (receiver) => {
     for (let i = 0; i < optDistrs.length; i++) {
         let tds = optDistrs[i].querySelectorAll("td")
         for (let j = 0; j < tds.length; j++) {
-            if ( 0 < j && j < tds.length-1) {
-                if (tds[j].innerText != "" && tds[j].innerText != data[i][optDisNameSeq[j-1]]) {
-                    flash(tds[j])
+            if ( 0 < j && j < tds.length-1 ) {
+                let fillContent = data[i][optDisNameSeq[j-1]]
+                if (2 <= j && j <= 8) {
+                    // 除了漲跌之外，數字假如更動要閃爍
+                    if (tds[j].innerText != "" && tds[j].innerText != data[i][optDisNameSeq[j-1]]) {
+                        flash(tds[j])
+                    }                  
+                } else {
+                    // 漲跌需要隨時更新顏色
+                    if (fillContent > 0) {
+                        tds[j].style.color = "blue"
+                    } else if (fillContent < 0) {
+                        tds[j].style.color = "red"
+                    }
                 }
-                tds[j].innerText = data[i][optDisNameSeq[j-1]]
+                tds[j].innerText = fillContent
             }
         }
     }
@@ -109,7 +120,7 @@ checkTokenWhileWindowLoad()
         navSignIn.textContent = `個人頁面`
         navSignIn.className = "btn btn-success"
         navSignIn.href = "profile.html"
-        return fetchPack('/api/1.0/realtime/getIndex', 'GET')
+        return fetchPack('/api/1.0/user/getBackEndTime', 'GET')
     } else if (msg == 'expire') {
         swal({
             title: "登入逾期",
@@ -131,6 +142,24 @@ checkTokenWhileWindowLoad()
             window.location.href = `${protocol}//${domain}` + "/signin.html"
         })
     }
+})
+.then(result => {
+    let {
+        dateOfWeek,
+        isDay,
+        isNight,
+        nowHour,
+    } = result
+
+    const weekdaysArray = [1, 2, 3, 4, 5]
+    let isTradeTime = isDay || isNight
+    let isOpenOnWeedays = weekdaysArray.includes(result.dateOfWeek) && isTradeTime
+    let isOpenOnSaturday = dateOfWeek == 6 && nowHour <= 5
+
+    if (isOpenOnWeedays || isOpenOnSaturday) {
+        isOpen = true
+    }
+    return fetchPack('/api/1.0/realtime/getIndex', 'GET')
 })
 .then(result => {
     // ---------- render OptDis ----------
@@ -233,6 +262,9 @@ const clickBuy = (e) => {
             button: "確認"
         })
     } else {
+        const allBuyInputs = document.querySelectorAll(".buyInput")
+        allBuyInputs.forEach(input => input.disabled = true)
+
         fetchPack('/api/1.0/user/buyParts', 'POST', carton)
         .then(result => {
             if (result.msg == 'success') {
@@ -242,6 +274,8 @@ const clickBuy = (e) => {
                     button: "確認"
                 })
                 .then(result => {
+                    allBuyInputs.forEach(input => input.disabled = false)
+                    userPartsRegion.click()
                     updateUserMoneynParts(userId)
                 })
             } else {
@@ -252,27 +286,7 @@ const clickBuy = (e) => {
                 })
             }
         })
-
-        function updateUserMoneynParts(userId) {
-            fetchPack('/api/1.0/user/showUserParts', 'POST', {userId: userId})
-            .then(result => {
-                userParts = result
-                const tbody4UserPart = document.querySelector('#user-part > div > table > tbody') 
-                tbody4UserPart.innerHTML = ''
-                showUserPartsInTable(result, tbody4UserPart)
-
-                const btns = document.querySelectorAll("button.liquidation")
-                btns.forEach(btn => {btn.addEventListener("click", click2LiquidateParts)})
-
-                return fetchPack('/api/1.0/user/showUserMoneyLeftnTotalprofit', 'POST', {userId: userId})
-            })
-            .then(result => {
-                const userMoneyLeftDiv = document.querySelector("#money-left")
-                userMoneyLeftDiv.innerHTML = ""
-                showUserMoneyLeftnTotalProfit(result, userMoneyLeftDiv)
-            })
-        }
-        
+   
     }
     input.value = ""
     
@@ -296,35 +310,23 @@ const click2LiquidateParts = (e) => {
         profit: profit
     }
 
-    console.log(carton)
-
-    fetchPack('/api/1.0/user/liquidateParts', 'POST', carton)
-    .then(result => {
+    if (!isOpen) {
         swal({
-            title: "平倉成功",
-            icon: "success",
+            title: "收盤時間，停止交易",
+            icon: "warning",
             button: "確認"
         })
-        // 下面這坨跟clickBuy裡面的function一樣 有空包一包
-        return fetchPack('/api/1.0/user/showUserParts', 'POST', {userId: userId})
-    })
-    .then(result => {
-        userParts = result
-        const tbody4UserPart = document.querySelector('#user-part > div > table > tbody') 
-        tbody4UserPart.innerHTML = ''
-        showUserPartsInTable(result, tbody4UserPart)
-
-        const btns = document.querySelectorAll("button.liquidation")
-        btns.forEach(btn => {btn.addEventListener("click", click2LiquidateParts)})
-
-        return fetchPack('/api/1.0/user/showUserMoneyLeftnTotalprofit', 'POST', {userId: userId})
-    })
-    .then(result => {
-        const userMoneyLeftDiv = document.querySelector("#money-left")
-        userMoneyLeftDiv.innerHTML = ""
-        showUserMoneyLeftnTotalProfit(result, userMoneyLeftDiv)
-    })
-    
+    } else {
+        fetchPack('/api/1.0/user/liquidateParts', 'POST', carton)
+        .then(result => {
+            swal({
+                title: "平倉成功",
+                icon: "success",
+                button: "確認"
+            })
+            updateUserMoneynParts(userId)
+        })
+    }
 }
 
 
@@ -378,7 +380,7 @@ const showOptDisInTable = (result, tbody) => {
                 let td = document.createElement("td")
                 let btn = document.createElement("button")
                 let input = document.createElement("input")
-                input.className = "mx-2"
+                input.className = "buyInput mx-2"
                 input.style.width = '50px'
                 btn.innerText = "購買"
                 if (j == 0) {
@@ -393,10 +395,17 @@ const showOptDisInTable = (result, tbody) => {
                 tr.appendChild(td)
             } else {
                 let td = document.createElement("td")
+                let fillContent = result[i][optDisNameSeq[j-1]]
                 if (j == 5) {
                     td.className = "table-active"
+                } else if (j == 1 || j == 9) {
+                    if (fillContent > 0) {
+                        td.style.color = "blue"
+                    } else if (fillContent < 0) {
+                        td.style.color = "red"
+                    }
                 }
-                td.innerText = result[i][optDisNameSeq[j-1]] //data[i][optDisNameSeq[j-1]] 
+                td.innerText = fillContent
                 tr.appendChild(td)
             }
 
@@ -414,15 +423,15 @@ const showUserMoneyLeftnTotalProfit = (result, div) => {
     const totalProfitTitle = document.createElement("h4")
     const totalProfitContent = document.createElement("h5")
 
-    moneyLeftTitle.innerText = '權益數: '
+    moneyLeftTitle.innerText = '權益數(NT$): '
 
     if (moneyLeft) {
-        moneyLeftContent.innerText = 'NT$ ' + moneyLeft
+        moneyLeftContent.innerText = moneyLeft
     } else {
-        moneyLeftContent.innerText = 'NT$ ' + 0
+        moneyLeftContent.innerText = 0
     }
 
-    totalProfitTitle.innerText = '總損益: '
+    totalProfitTitle.innerText = '總損益(NT$): '
     totalProfitTitle.classList.add('mt-3')
     
     if (totalprofit) {
@@ -431,9 +440,9 @@ const showUserMoneyLeftnTotalProfit = (result, div) => {
         } else if (totalprofit < 0) {
             totalProfitContent.style.color = 'red'
         }
-        totalProfitContent.innerText = 'NT$ ' + totalprofit
+        totalProfitContent.innerText = totalprofit
     } else {
-        totalProfitContent.innerText = 'NT$ ' + 0
+        totalProfitContent.innerText = 0
     }
 
     div.appendChild(moneyLeftTitle)
@@ -442,3 +451,38 @@ const showUserMoneyLeftnTotalProfit = (result, div) => {
     div.appendChild(totalProfitContent)
 
 } 
+
+
+const updateUserMoneynParts = (userId) => {
+    fetchPack('/api/1.0/user/showUserParts', 'POST', {userId: userId})
+    .then(result => {
+        userParts = result
+        const tbody4UserPart = document.querySelector('#user-part > div > table > tbody') 
+        tbody4UserPart.innerHTML = ''
+        showUserPartsInTable(result, tbody4UserPart)
+
+        const btns = document.querySelectorAll("button.liquidation")
+        btns.forEach(btn => {btn.addEventListener("click", click2LiquidateParts)})
+
+        return fetchPack('/api/1.0/user/showUserMoneyLeftnTotalprofit', 'POST', {userId: userId})
+    })
+    .then(result => {
+        const userMoneyLeftDiv = document.querySelector("#money-left")
+        userMoneyLeftDiv.innerHTML = ""
+        showUserMoneyLeftnTotalProfit(result, userMoneyLeftDiv)
+    })
+}
+
+// Rolling Number 
+const countToNumber = function (element, number, suffix, duration) {
+    $({count: parseInt(element.text().split("+")[0].replace(/\,/g, ''))}).animate({count: number}, {
+      duration: duration ? duration : 1000,
+      easing: 'swing', 
+      step: function (now) {
+        element.text((Math.floor(now) + suffix).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+      },
+      complete: function () {
+        countingFromZero = false;
+      }
+    });
+}

@@ -1,12 +1,16 @@
 const router = require('express').Router();
 
 const { 
+    getBackEndTime,
     buyParts,
     showUserParts,
     updateUserPartsnMoneyLeft,
     showUserMoneyLeftnTotalprofit,
 } = require('../controllers/trade_controller')
 
+
+router.route('/user/getBackEndTime')
+.get(getBackEndTime)
 
 
 router.route('/user/buyParts')

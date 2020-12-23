@@ -6,7 +6,18 @@ const {
     sqlUpdateUserMoneyLeft,
     sqlGetUserLeftParts,
     sqlUpdateUserParts
- } = require('../models/trade_model')
+} = require('../models/trade_model')
+
+
+const { 
+    getNowTime 
+} = require("../../util/util_timezone")
+
+
+
+const getBackEndTime = (req, res) => {
+    res.send(getNowTime())
+}
 
 
 const buyParts = (req, res) => {
@@ -99,6 +110,7 @@ const showUserMoneyLeftnTotalprofit = (req, res) => {
 
 
 module.exports = {
+    getBackEndTime,
     buyParts,
     showUserParts,
     updateUserPartsnMoneyLeft,

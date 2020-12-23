@@ -20,8 +20,9 @@
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Custom styles for this template -->
+  <!-- styles -->
   <link href="css/modern-business.css" rel="stylesheet">
+  <link href="css/popover.css" rel="stylesheet">
 
   <!-- Highcharts -->
   <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -29,58 +30,6 @@
   <script src="https://code.highcharts.com/stock/modules/exporting.js"></script> 
   <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
 
-  <!-- Darren's try -->
-  <style media="screen">
-    /* #myoptionsicon {height: 50px; margin: 8px 10px;} */
-    #tooltip {
-      background: #333;
-      color: white;
-      font-weight: bold;
-      padding: 4px 8px;
-      font-size: 13px;
-      border-radius: 4px;
-      display: none;
-    }
-
-    #tooltip[data-show] {
-      display: block;
-    }
-
-    #arrow,
-    #arrow::before {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      z-index: -1;
-    }
-
-    #arrow::before {
-      content: '';
-      transform: rotate(45deg);
-      background: #333;
-    }
-
-    #tooltip[data-popper-placement^='top'] > #arrow {
-      bottom: -4px;
-    }
-
-    #tooltip[data-popper-placement^='bottom'] > #arrow {
-      top: -4px;
-    }
-
-    #tooltip[data-popper-placement^='left'] > #arrow {
-      right: -4px;
-    }
-
-    #tooltip[data-popper-placement^='right'] > #arrow {
-      left: -4px;
-    }
-
-    .badge {
-      background-color:#a7c957;
-    }
-  </style>
-  
 </head>
 
 <body>
@@ -128,7 +77,7 @@
         <div class="card h-100">
           <div class="card-body">
             <h3 class="card-title">myOptions Panel</h3>
-            <h6 class="card-subtitle mb-3 text-muted">個人資訊</h6>
+            <h6 class="card-subtitle mb-3 text-muted font-weight-bold">個人資訊</h6>
             <h5 class="card-text mb-3" id="email">E-mail: </h5>
             <h5 class="card-text" id="registerTime">註冊時間: </h5>
           </div>
@@ -137,7 +86,7 @@
       <div class="col">
         <div class="card h-100">
           <div class="card-body">
-            <h4 class="card-title my-3">可動用權益數
+            <h4 class="card-title my-3">權益數
               <span id="fluidbadge" class="badge badge rounded-pill text-dark" aria-describedby="tooltip">Info</span>
               <div id="tooltip" role="tooltip">
                 簡單來說就是"餘額"
@@ -179,7 +128,7 @@
             <h4 class="card-title my-3">平均報酬率
               <span id="returnbadge" class="badge badge rounded-pill text-dark" aria-describedby="tooltip">Info</span>
               <div id="tooltip" role="tooltip">
-                總損益/付出成本
+                總損益 / 付出成本
                 <div id="arrow" data-popper-arrow></div>
               </div>
             </h4>
@@ -193,7 +142,7 @@
             <h4 class="card-title my-3">勝率
               <span id="winRatebadge" class="badge badge rounded-pill text-dark" aria-describedby="tooltip">Info</span>
               <div id="tooltip" role="tooltip">
-                正損益次數總/交易次數
+                正損益次數 / 總交易次數
                 <div id="arrow" data-popper-arrow></div>
               </div>
             </h4>
@@ -204,7 +153,7 @@
       <div class="col">
         <div class="card h-100">
           <div class="card-body">
-            <h4 class="card-title my-3">交易次數</h4>
+            <h4 class="card-title my-3">總交易次數</h4>
             <h4 class="card-title my-4" id="tradeTimes">0</h4>
           </div>
         </div>
