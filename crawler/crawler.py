@@ -515,7 +515,7 @@ def staticBigIndexCrawler(params):
             queryByn.click()
             time.sleep(3)
 
-            print("Year: %s Month: %s Crawled." %(curYear, i+1))
+            # print("Year: %s Month: %s Crawled." %(curYear, i+1))
             page_source = driver.page_source
             data = parser4staticBigIndex(page_source)
 

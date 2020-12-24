@@ -317,13 +317,19 @@ const click2LiquidateParts = (e) => {
             button: "確認"
         })
     } else {
+        const allLiquidateBtn = document.querySelectorAll(".liquidation")
+        allLiquidateBtn.forEach(btn => btn.disabled = true)
+
         fetchPack('/api/1.0/user/liquidateParts', 'POST', carton)
         .then(result => {
-            swal({
+            return swal({
                 title: "平倉成功",
                 icon: "success",
                 button: "確認"
             })
+        })
+        .then(result => {
+            allLiquidateBtn.forEach(btn => btn.disabled = false)
             updateUserMoneynParts(userId)
         })
     }
@@ -419,28 +425,32 @@ const showUserMoneyLeftnTotalProfit = (result, div) => {
     let { moneyLeft, totalprofit } = result
 
     const moneyLeftTitle = document.createElement("h4")
+    moneyLeftTitle.innerText = "權益數: "
     const moneyLeftContent = document.createElement("h5")
+    moneyLeftContent.id = "moneyLeftContent"
     const totalProfitTitle = document.createElement("h4")
+    totalProfitTitle.innerText = "總損益: "
+    totalProfitTitle.classList.add('mt-3')
     const totalProfitContent = document.createElement("h5")
-
-    moneyLeftTitle.innerText = '權益數(NT$): '
+    totalProfitContent.id = "totalProfitContent"
+    
 
     if (moneyLeft) {
-        moneyLeftContent.innerText = moneyLeft
+        countToNumber($(moneyLeftContent), Number(moneyLeft), 'NT$', '', 700)
+        // moneyLeftContent.innerText = moneyLeft
     } else {
         moneyLeftContent.innerText = 0
     }
 
-    totalProfitTitle.innerText = '總損益(NT$): '
-    totalProfitTitle.classList.add('mt-3')
-    
+
     if (totalprofit) {
         if (totalprofit > 0) {
             totalProfitContent.style.color = 'blue'
         } else if (totalprofit < 0) {
             totalProfitContent.style.color = 'red'
         }
-        totalProfitContent.innerText = totalprofit
+        countToNumber($(totalProfitContent), Number(totalprofit), 'NT$', '', 700)
+        // totalProfitContent.innerText = totalprofit
     } else {
         totalProfitContent.innerText = 0
     }
@@ -474,12 +484,12 @@ const updateUserMoneynParts = (userId) => {
 }
 
 // Rolling Number 
-const countToNumber = function (element, number, suffix, duration) {
+const countToNumber = function (element, number, prefix, suffix, duration) {
     $({count: parseInt(element.text().split("+")[0].replace(/\,/g, ''))}).animate({count: number}, {
       duration: duration ? duration : 1000,
       easing: 'swing', 
       step: function (now) {
-        element.text((Math.floor(now) + suffix).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        element.text((prefix + Math.floor(now) + suffix).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
       },
       complete: function () {
         countingFromZero = false;
