@@ -33,8 +33,8 @@ def realtimeOptCrawler(params):
     isWeekdays = params['dayOfWeek'] < 5
 
     # last trading hours on Saturday
-    isLastTradeHours = (params['dayOfWeek'] == 5) and params['isNight']
-    
+    isLastTradeHours = (params['dayOfWeek'] == 5) and params['currentTime'].hour <= 5
+
     # 判斷開盤日期: 平日 or 禮拜六最後交易時段
     if (isWeekdays or isLastTradeHours):
 
@@ -103,7 +103,7 @@ def realtimeBigIndexCrawler(params):
     isWeekdays = params['dayOfWeek'] < 5
 
     # last trading hours on Saturday
-    isLastTradeHours = (params['dayOfWeek'] == 5) and params['isNight']
+    isLastTradeHours = (params['dayOfWeek'] == 5) and params['currentTime'].hour <= 5
     
     # 判斷開盤日期: 平日 or 禮拜六最後交易時段
     if (isWeekdays or isLastTradeHours):

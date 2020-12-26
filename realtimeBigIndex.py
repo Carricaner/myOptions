@@ -3,6 +3,7 @@ from crawler.crawler import realtimeBigIndexCrawler
 
 
 bigIndexParams = {
+    'currentTime': basicParams['currentTime'],
     'isDay': basicParams['isDay'],
     'isNight': basicParams['isNight'],
     'isheadless': True,
