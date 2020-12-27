@@ -10,25 +10,25 @@ const sqlGetUser = (lookupArray) => {
             lookupString += `${lookupArray[i]}, `
         }
     }
-    return transPromise(`SELECT ${lookupString} FROM users`)
+    return transPromise(`SELECT ${lookupString} FROM users;`)
     .then(result => {return result.result})
 }
 
 
 const sqlGetUserWithSpecificEmail = (email, localorfb) => {
-    return transPromise(`SELECT * FROM users WHERE email = '${email}' AND localorfb = '${localorfb}'`)
+    return transPromise(`SELECT * FROM users WHERE email = '${email}' AND localorfb = '${localorfb}';`)
     .then(result => {return result.result})
 }
 
 
 const sqlInsertUser = (user) => {
-    return transPromise('INSERT INTO users SET ?', user)
+    return transPromise('INSERT INTO users SET ?;', user)
     .then(result => {return result})
 }
 
 
 const sqlCreateANewMoneyLeft = (user) => {
-    return transPromise('INSERT INTO moneynprofit SET ?', user)
+    return transPromise('INSERT INTO moneynprofit SET ?;', user)
     .then(result => {return result})
 }
 
