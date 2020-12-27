@@ -51,7 +51,7 @@ socket.on('realtimeOpt', (receiver) => {
             if ( 0 < j && j < tds.length-1 ) {
                 let fillContent = data[i][optDisNameSeq[j-1]]
                 if (2 <= j && j <= 8) {
-                    // 除了漲跌之外，數字假如更動要閃爍
+                    // 除了漲跌不用之外，數字假如更動要閃爍
                     if (tds[j].innerText != "" && tds[j].innerText != data[i][optDisNameSeq[j-1]]) {
                         flash(tds[j])
                     }                  

@@ -100,14 +100,106 @@ fetchPack('/api/1.0/realtime/getIndex', 'GET')
     // update initial options
     bigIndex.update({
         yAxis: {
-            min: result.bigIndex.low-20,
-            max: result.bigIndex.high+20,
+            min: result.bigIndex.low-30,
+            max: result.bigIndex.high+30,
+            plotLines: [{
+                color: '#0022ff',
+                width: 1,
+                value: result.bigIndex.open,
+                label: {
+                    text: `Open at ${result.bigIndex.open}`,
+                    style: {
+                        color: '#0022ff',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    y: -10,
+                },
+            },
+            {
+                color: '#0022ff',
+                width: 1,
+                value: result.bigIndex.high,
+                dashStyle: 'Dash',
+                label: {
+                    text: `High: ${result.bigIndex.high}`,
+                    style: {
+                        color: '#0022ff',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    x: 300,
+                    y: -15,
+                },
+            },
+            {
+                color: '#0022ff',
+                width: 1,
+                value: result.bigIndex.low,
+                dashStyle: 'Dash',
+                label: {
+                    text: `Low: ${result.bigIndex.low}`,
+                    style: {
+                        color: '#0022ff',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    x: 150,
+                    y: 20,
+                },
+            }],
         }
     })
     future.update({
         yAxis: {
-            min: result.futureIndex.low-20,
-            max: result.futureIndex.high+20,
+            min: result.futureIndex.low-30,
+            max: result.futureIndex.high+30,
+            plotLines: [{
+                color: '#ff4000',
+                width: 1,
+                value: result.futureIndex.open,
+                label: {
+                    text: `Open at ${result.futureIndex.open}`,
+                    style: {
+                        color: '#ff4000',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    y: -10,
+                },
+            },
+            {
+                color: '#ff4000',
+                width: 1,
+                value: result.futureIndex.high,
+                dashStyle: 'Dash',
+                label: {
+                    text: `High: ${result.futureIndex.high}`,
+                    style: {
+                        color: '#ff4000',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    x: 300,
+                    y: -15,
+                },
+            },
+            {
+                color: '#ff4000',
+                width: 1,
+                value: result.futureIndex.low,
+                dashStyle: 'Dash',
+                label: {
+                    text: `Low: ${result.futureIndex.low}`,
+                    style: {
+                        color: '#ff4000',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    x: 150,
+                    y: 20,
+                },
+            }],
         }
     })
     // update initial series
@@ -125,8 +217,54 @@ socket.on('bigIndexContainer', (receiver) => {
     // update options
     bigIndex.update({
         yAxis: {
-            min: receiver.low-20,
-            max: receiver.high+20,
+            min: receiver.low-30,
+            max: receiver.high+30,
+            plotLines: [{
+                color: '#0022ff',
+                width: 1,
+                value: receiver.open,
+                label: {
+                    text: `Open at ${receiver.open}`,
+                    style: {
+                        color: '#0022ff',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    y: -10,
+                },
+            },
+            {
+                color: '#0022ff',
+                width: 1,
+                value: receiver.high,
+                dashStyle: 'Dash',
+                label: {
+                    text: `High: ${receiver.high}`,
+                    style: {
+                        color: '#0022ff',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    x: 300,
+                    y: -15,
+                },
+            },
+            {
+                color: '#0022ff',
+                width: 1,
+                value: receiver.low,
+                dashStyle: 'Dash',
+                label: {
+                    text: `Low: ${receiver.low}`,
+                    style: {
+                        color: '#0022ff',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    x: 150,
+                    y: 20,
+                },
+            }],
         }
     })
     // update series
@@ -140,8 +278,54 @@ socket.on('futureContainer', (receiver) => {
     // update options
     future.update({
         yAxis: {
-            min: receiver.low-20,
-            max: receiver.high+20,
+            min: receiver.low-30,
+            max: receiver.high+30,
+            plotLines: [{
+                color: '#ff4000',
+                width: 1,
+                value: receiver.open,
+                label: {
+                    text: `Open at ${receiver.open}`,
+                    style: {
+                        color: '#ff4000',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    y: -10,
+                },
+            },
+            {
+                color: '#ff4000',
+                width: 1,
+                value: receiver.high,
+                dashStyle: 'Dash',
+                label: {
+                    text: `High: ${receiver.high}`,
+                    style: {
+                        color: '#ff4000',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    x: 300,
+                    y: -15,
+                },
+            },
+            {
+                color: '#ff4000',
+                width: 1,
+                value: receiver.low,
+                dashStyle: 'Dash',
+                label: {
+                    text: `Low: ${receiver.low}`,
+                    style: {
+                        color: '#ff4000',
+                        fontWeight: 'bold'
+                    },
+                    verticalAlign: 'top',
+                    x: 150,
+                    y: 20,
+                },
+            }],
         }
     })
     // update series
