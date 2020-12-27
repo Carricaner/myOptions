@@ -171,13 +171,18 @@ checkTokenWhileWindowLoad()
   changeFontColorByValue(referArray, DOMArray)
   animateData(animationArray, referArray, secs + Math.floor(Math.random()*1600))
 
+
+  console.log(result)
   // update highcharts series
   cpRate.series[0].update({ data: [{y:result[1].callTimes}, {y:result[1].putTimes}] }, false)
-  userPerformance.series[0].update({data: result[1].aveUserSeries})
-  userPerformance.series[1].update({data: result[1].aveOtherSeries})
+  userPerformance1.series[0].update({data: result[1].aveUserDealpricwSeries}, false)
+  userPerformance1.series[1].update({data: result[1].aveOtherDealpricwSeries}, false)
+  userPerformance2.series[0].update({data: result[1].aveUserPremiumSeries}, false)
+  userPerformance2.series[1].update({data: result[1].aveOtherPremiumSeries}, false)
   // redraw highcharts plots
   cpRate.redraw()
-  userPerformance.redraw()
+  userPerformance1.redraw()
+  userPerformance2.redraw()
 })
 
 
@@ -233,7 +238,7 @@ var options4cpPie = {
   }]
 }
 
-var options4performance = {
+var options4performance1 = {
   chart: {
       type: 'column'
   },
@@ -243,6 +248,54 @@ var options4performance = {
   xAxis: {
       categories: [
         '平均每筆成交價 (新台幣元)',
+      ],
+      crosshair: true
+  },
+  exporting: {
+    enabled: false,
+  },
+  yAxis: {
+      min: 0,
+      title: {
+          text: 'NT dollar'
+      }
+  },
+  tooltip: {
+      headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+      pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+          '<td style="padding:0"><b>NT$ {point.y:.1f}</b></td></tr>',
+      footerFormat: '</table>',
+      shared: true,
+      useHTML: true
+  },
+  plotOptions: {
+      column: {
+          pointPadding: 0.2,
+          borderWidth: 0
+      }
+  },
+  series: [{
+      name: '個人',
+      data: [],
+      color: '#34bfae'
+
+  }, {
+      name: '其他全部交易者',
+      data: [],
+      color: '#5394bd'
+
+  }]
+}
+
+var options4performance2 = {
+  chart: {
+      type: 'column'
+  },
+  title: {
+      text: ''
+  },
+  xAxis: {
+      categories: [
         '平均每筆交易權利金 (新台幣元)'
       ],
       crosshair: true
@@ -284,8 +337,8 @@ var options4performance = {
 }
 
 var cpRate = Highcharts.chart('cpRate', options4cpPie)
-var userPerformance = Highcharts.chart('performance', options4performance)
-
+var userPerformance1 = Highcharts.chart('performance1', options4performance1)
+var userPerformance2 = Highcharts.chart('performance2', options4performance2)
 
 //  ---------- popovers ----------
 const DOMarr = [

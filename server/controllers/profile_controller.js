@@ -74,14 +74,18 @@ const analyzeUserHistoricParts = (req, res) => {
             tradeTimes: result[0].length,
             callTimes: callTimes,
             putTimes: putTimes,
-            aveUserSeries: [
+            aveUserDealpricwSeries: [
                 Number((userToalCost / userTimes).toFixed(2)),
+            ],
+            aveOtherDealpricwSeries: [
+                Number((otherToalCost / otherTimes).toFixed(2)),
+            ],
+            aveUserPremiumSeries: [
                 Number((userToalPromise / userTimes).toFixed(2)),
             ],
-            aveOtherSeries: [
-                Number((otherToalCost / otherTimes).toFixed(2)),
-                Number((otherToalPromise / otherTimes).toFixed(2))
-            ],
+            aveOtherPremiumSeries: [
+                Number((otherToalPromise / otherTimes).toFixed(2)),
+            ]
         }
 
         res.send(carton)

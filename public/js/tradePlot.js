@@ -129,7 +129,7 @@ fetchPack('/api/1.0/realtime/getIndex', 'GET')
                     },
                     verticalAlign: 'top',
                     x: 300,
-                    y: -15,
+                    y: -10,
                 },
             },
             {
@@ -181,7 +181,7 @@ fetchPack('/api/1.0/realtime/getIndex', 'GET')
                     },
                     verticalAlign: 'top',
                     x: 300,
-                    y: -15,
+                    y: -10,
                 },
             },
             {
@@ -246,7 +246,7 @@ socket.on('bigIndexContainer', (receiver) => {
                     },
                     verticalAlign: 'top',
                     x: 300,
-                    y: -15,
+                    y: -10,
                 },
             },
             {
@@ -307,7 +307,7 @@ socket.on('futureContainer', (receiver) => {
                     },
                     verticalAlign: 'top',
                     x: 300,
-                    y: -15,
+                    y: -10,
                 },
             },
             {
