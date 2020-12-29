@@ -1,4 +1,4 @@
-const { redisClient, redisGet } = require("../../util/util_redis");
+const { redisGet } = require("../../util/util_redis");
 
 
 

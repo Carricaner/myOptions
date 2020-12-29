@@ -38,29 +38,6 @@ const countToNumber = function (element, number, suffix, duration) {
 	});
 };
 
-// fetchPack
-const fetchPack = (endPoint, method, body = null) => {
-
-	let option = {
-		headers: {"Content-Type": "application/json"},
-		method: method,
-	};
-
-	if (method == "POST") {
-		option.body = JSON.stringify(body);
-	}
-
-	const fetching = fetch(endPoint, option)
-		.then(response => {
-			let message = response.json();
-			return message;
-		}); 
-
-	return fetching;
-};
-
-
-
 // ---------- Listeners ----------
 // for SignOut
 signout.addEventListener("click", ()=>{
@@ -79,7 +56,7 @@ signout.addEventListener("click", ()=>{
 
 // ---------- Execution ----------
 // Identify User
-checkTokenWhileWindowLoad()
+checkTokenWhileWindowLoad(token)
 	.then(result => {
 		const { msg } = result;
 
@@ -150,9 +127,9 @@ checkTokenWhileWindowLoad()
 		const animateData = (animationArray, referArray, secs) => {
 			for (let i = 0; i < animationArray.length; i++) {
 				if ( i == 4 ) {
-					countToNumber(animationArray[i], referArray[i]*100, " %", secs);
+					applyRollingNumber(animationArray[i], referArray[i]*100, "", " %", secs);
 				} else {
-					countToNumber(animationArray[i], referArray[i], "", secs);
+					applyRollingNumber(animationArray[i], referArray[i], "", "", secs);
 				}
 			}
 		};
@@ -172,9 +149,6 @@ checkTokenWhileWindowLoad()
 		};
 		changeFontColorByValue(referArray, DOMArray);
 		animateData(animationArray, referArray, secs + Math.floor(Math.random()*1600));
-
-
-		console.log(result);
 
 		// update highcharts series
 		cpRate.series[0].update({ data: [{y:result[1].callTimes}, {y:result[1].putTimes}] }, false);

@@ -1,25 +1,15 @@
 // ---------- jQuery for sticky theads ---------- 
-var $th = $(".tableFixHead1").find("thead th");
-$(".tableFixHead1").on("scroll", function() {
-	$th.css("transform", "translateY("+ this.scrollTop +"px)");
-});
-var $th2 = $(".tableFixHead2").find("thead th");
-$(".tableFixHead2").on("scroll", function() {
-	$th2.css("transform", "translateY("+ this.scrollTop +"px)");
-});
+applyFrozenTablehead(".tableFixHead1")
+applyFrozenTablehead(".tableFixHead2")
 
 
 // inner href anamation
-$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(2) > a").bind("click touch", function(){
-	$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top - 120 )}, 300);
-});
-$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(3) > a").bind("click touch", function(){
-	$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top - 120 )}, 400);
-});
-$("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(4) > a").bind("click touch", function(){
-	$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top - 120 )}, 500);
-});
-
+const realtimeIndexSelector = "body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(2) > a"
+const optDisPriceSelector = "body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(3) > a"
+const userPartSelector = "body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(4) > a"
+applyInnerHrefAnimationListener(realtimeIndexSelector, 120, 300)
+applyInnerHrefAnimationListener(optDisPriceSelector, 120, 400)
+applyInnerHrefAnimationListener(userPartSelector, 120, 500)
 
 
 // ---------- global data for Trade ----------
@@ -38,7 +28,7 @@ const userPartsRegion = document.querySelector("body > div > div:nth-child(1) > 
 socket.on("realtimeOpt", (receiver) => {
 
 	optDis = receiver;
-	let { date, time, product, data } = receiver;
+	let { data } = receiver;
 	const tbody4OptDis = document.querySelector("#optDisTable table tbody");
 	const tobody4UserPart = document.querySelector("#user-part > div > table > tbody");
 	const optDistrs = tbody4OptDis.querySelectorAll("tr");
@@ -54,7 +44,7 @@ socket.on("realtimeOpt", (receiver) => {
 
 					// 除了漲跌不用之外，數字假如更動要閃爍
 					if (tds[j].innerText != "" && tds[j].innerText != data[i][optDisNameSeq[j-1]]) {
-						flash(tds[j]);
+						applyFlashBackground(tds[j], 2000);
 					}                  
 				} else {
 
@@ -113,7 +103,7 @@ socket.on("time", (receiver) => {
 
 
 // ---------- check authentication ----------
-checkTokenWhileWindowLoad()
+checkTokenWhileWindowLoad(token)
 	.then(result => {
 		const { msg } = result;
 		const navSignIn = document.querySelector("#navbarResponsive > ul > li:nth-child(4) > a");
@@ -190,20 +180,14 @@ checkTokenWhileWindowLoad()
 	.then(result => {
 		const userMoneyLeftDiv = document.querySelector("#money-left");
 		showUserMoneyLeftnTotalProfit(result, userMoneyLeftDiv);
+	})
+	.catch(() => {
+		console.log("The error occurs...")
 	});
 
 
 
 // functions
-// flash
-const flash = (DOM) => {
-	DOM.classList.add("flashOnce");
-	setTimeout(()=>{
-		DOM.classList.remove("flashOnce");
-	},
-	2000);
-};
-
 
 const nowPriceGetter = (optDis, target, cp) => {
 	for (let i = 0; i < optDis.data.length; i++) {
@@ -293,7 +277,6 @@ const clickBuy = (e) => {
    
 	}
 	input.value = "";
-    
 };
 
 
@@ -440,9 +423,7 @@ const showUserMoneyLeftnTotalProfit = (result, div) => {
     
 
 	if (moneyLeft) {
-		countToNumber($(moneyLeftContent), Number(moneyLeft), "NT$", "", 700);
-
-		// moneyLeftContent.innerText = moneyLeft
+		applyRollingNumber($(moneyLeftContent), Number(moneyLeft), "NT$", "", 700);
 	} else {
 		moneyLeftContent.innerText = 0;
 	}
@@ -454,9 +435,7 @@ const showUserMoneyLeftnTotalProfit = (result, div) => {
 		} else if (totalprofit < 0) {
 			totalProfitContent.style.color = "red";
 		}
-		countToNumber($(totalProfitContent), Number(totalprofit), "NT$", "", 700);
-
-		// totalProfitContent.innerText = totalprofit
+		applyRollingNumber($(totalProfitContent), Number(totalprofit), "NT$", "", 700);
 	} else {
 		totalProfitContent.innerText = 0;
 	}
@@ -487,18 +466,4 @@ const updateUserMoneynParts = (userId) => {
 			userMoneyLeftDiv.innerHTML = "";
 			showUserMoneyLeftnTotalProfit(result, userMoneyLeftDiv);
 		});
-};
-
-// Rolling Number 
-const countToNumber = function (element, number, prefix, suffix, duration) {
-	$({count: parseInt(element.text().split("+")[0].replace(/\,/g, ""))}).animate({count: number}, {
-		duration: duration ? duration : 1000,
-		easing: "swing", 
-		step: function (now) {
-			element.text((prefix + Math.floor(now) + suffix).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
-		},
-		complete: function () {
-			countingFromZero = false;
-		}
-	});
 };

@@ -1,40 +1,6 @@
-// 頁內轉跳動畫
-$("#navbarResponsive > ul > li:nth-child(1) > a").bind("click touch", function(){
-	$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top -90 )}, 300);
-});
-$("#carouselExampleIndicators > div > div:nth-child(2) > div > a").bind("click touch", function(){
-	$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top -90 )}, 300);
-});
-
-
-// DOM
-const nowTarget = document.querySelector("body > div > div:nth-child(5) > div.col-lg-12.text-center > table > tbody > tr > td:nth-child(4)");
-
-
-// functions
-const fetchPack = (endPoint, method, body = null) => {
-
-	let option = {
-		headers: {"Content-Type": "application/json"},
-		method: method,
-	};
-
-	if (method == "POST") {
-		option.body = JSON.stringify(body);
-	}
-
-	const fetching = fetch(endPoint, option)
-		.then(response => {
-			let message = response.json();
-			return message;
-		}); 
-
-	return fetching;
-};
-
 // Highchart
 
-var options4bigIndex = {
+let options4bigIndex = {
 	chart: {
 		type: "area"
 	},
@@ -51,8 +17,6 @@ var options4bigIndex = {
 		title: {
 			text: "點數"
 		},
-
-		// min: 14150,
 	},
 	series: [{
 		name: "大盤指數",
@@ -64,7 +28,7 @@ var options4bigIndex = {
 	}
 };
 
-var options4future = {
+let options4future = {
 	chart: {
 		type: "area"
 	},
@@ -81,8 +45,6 @@ var options4future = {
 		title: {
 			text: "點數"
 		},
-
-		// min: 14150,
 	},
 	series: [{
 		name: "台指期",
@@ -94,8 +56,8 @@ var options4future = {
 	}
 };
 
-var bigIndex = new Highcharts.Chart("bigIndex", options4bigIndex);
-var future = new Highcharts.Chart("future", options4future);
+let bigIndex = new Highcharts.Chart("bigIndex", options4bigIndex);
+let future = new Highcharts.Chart("future", options4future);
 
 fetchPack("/api/1.0/realtime/getIndex", "GET")
 	.then(result => {
@@ -217,7 +179,6 @@ fetchPack("/api/1.0/realtime/getIndex", "GET")
 
 
 // ---------- socket part ----------
-var socket = io.connect();
 socket.on("bigIndexContainer", (receiver) => {    
 
 	// update options

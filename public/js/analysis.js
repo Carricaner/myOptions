@@ -1,26 +1,5 @@
-// functions
-const fetchPack = (endPoint, method, body = null) => {
-
-	let option = {
-		headers: {"Content-Type": "application/json"},
-		method: method,
-	};
-
-	if (method == "POST") {
-		option.body = JSON.stringify(body);
-	}
-
-	const fetching = fetch(endPoint, option)
-		.then(response => {
-			let message = response.json();
-			return message;
-		}); 
-
-	return fetching;
-};
-
 // ---------- check authentication ----------
-checkTokenWhileWindowLoad()
+checkTokenWhileWindowLoad(token)
 	.then(result => {
 		const { msg } = result;
 		const navSignIn = document.querySelector("#navbarResponsive > ul > li:nth-child(4) > a");
@@ -355,15 +334,12 @@ var staticBigguyCost = Highcharts.chart("plot4", options4BigguyCost);
 
 
 // inner href anamation
-$("body > div > ul > li:nth-child(1) > a").bind("click touch", function(){
-	$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top - 120 )}, 300);
-});
-$("body > div > ul > li:nth-child(2) > a").bind("click touch", function(){
-	$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top - 120 )}, 400);
-});
-$("body > div > ul > li:nth-child(3) > a").bind("click touch", function(){
-	$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top - 120 )}, 700);
-});
-$("body > div > ul > li:nth-child(4) > a").bind("click touch", function(){
-	$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top - 120 )}, 800);
-});
+const bigIndexSelector = "body > div > ul > li:nth-child(1) > a"
+const optDisSelector = "body > div > ul > li:nth-child(2) > a"
+const bigguyUnitSelector = "body > div > ul > li:nth-child(3) > a"
+const bigguyCostSelector = "body > div > ul > li:nth-child(4) > a"
+
+applyInnerHrefAnimationListener(bigIndexSelector, 120, 300)
+applyInnerHrefAnimationListener(optDisSelector, 120, 400)
+applyInnerHrefAnimationListener(bigguyUnitSelector, 120, 600)
+applyInnerHrefAnimationListener(bigguyCostSelector, 120, 700)

@@ -1,28 +1,5 @@
-// functions
-const fetchPack = (endPoint, method, body = null) => {
-
-	let option = {
-		headers: {"Content-Type": "application/json"},
-		method: method,
-	};
-
-	if (method == "POST") {
-		option.body = JSON.stringify(body);
-	}
-
-	const fetching = fetch(endPoint, option)
-		.then(response => {
-			let message = response.json();
-			return message;
-		}); 
-
-	return fetching;
-};
-
-
 // user recognition
-
-checkTokenWhileWindowLoad()
+checkTokenWhileWindowLoad(token)
 	.then(result => {
 		const navSignIn = document.querySelector("#navbarResponsive > ul > li:nth-child(4) > a");
 		if (result.msg == "valid") {
@@ -37,19 +14,13 @@ checkTokenWhileWindowLoad()
 	});
 
 
-// DOM
-const nowTarget = document.querySelector("body > div > div:nth-child(5) > div.col-lg-12.text-center > table > tbody > tr > td:nth-child(4)");
-
 // inner href anamation
-$("#navbarResponsive > ul > li:nth-child(1) > a").bind("click touch", function(){
-	$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top -110 )}, 300);
-});
-$("#carouselExampleIndicators > div > div:nth-child(2) > div > a").bind("click touch", function(){
-	$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top -110 )}, 300);
-});
+applyInnerHrefAnimationListener("#navbarResponsive > ul > li:nth-child(1) > a", 110, 300)
+applyInnerHrefAnimationListener("#carouselExampleIndicators > div > div:nth-child(2) > div > a", 110, 300)
+
 
 // Highchart
-var options4plot1 = {
+var options4index2Profit = {
 	chart: {
 		type: "area"
 	},
@@ -74,8 +45,7 @@ var options4plot1 = {
 		enabled: false,
 	}
 };
-
-var plot1 = new Highcharts.Chart("plot1", options4plot1);
+var index2Profit = new Highcharts.Chart("index2ProfitPlot", options4index2Profit);
 
 
 // button listener
@@ -87,6 +57,7 @@ buys.forEach(btn => {
 		const prefix = `body > div > div:nth-child(5) > div:nth-child(2) > table > tbody > `;
 		const target = Number(document.querySelector(prefix + `tr:nth-child(${numberOfRow}) > td.table-active`).textContent);
 		const cp = Number(document.querySelector(prefix + `tr:nth-child(${numberOfRow}) > td:nth-child(${numberOfCell})`).textContent); 
+		const nowTarget = document.querySelector("body > div > div:nth-child(5) > div.col-lg-12.text-center > table > tbody > tr > td:nth-child(4)");
 		let newSeries = [];
 		let balance;
 		if (numberOfCell == "1") {
@@ -102,7 +73,7 @@ buys.forEach(btn => {
 			}
 
 			// update options
-			plot1.update({
+			index2Profit.update({
 				xAxis: {
 					plotLines: [{
 						color: "#dc3545",
@@ -137,10 +108,10 @@ buys.forEach(btn => {
 			});
 
 			// update series
-			plot1.series[0].update({ data: newSeries, color: "#dc3545"}, false);
+			index2Profit.series[0].update({ data: newSeries, color: "#dc3545"}, false);
 
 			// redraw plots
-			plot1.redraw();
+			index2Profit.redraw();
 
 		} else {
 			for (let i = 13500; i < 14201; i += 5) {
@@ -155,7 +126,7 @@ buys.forEach(btn => {
 			}
 
 			// update options
-			plot1.update({
+			index2Profit.update({
 				xAxis: {
 					plotLines: [{
 						color: "#28a745",
@@ -190,10 +161,10 @@ buys.forEach(btn => {
 			});
 
 			// update series
-			plot1.series[0].update({ data: newSeries, color: "#28a745"}, false);
+			index2Profit.series[0].update({ data: newSeries, color: "#28a745"}, false);
 
 			// redraw plots
-			plot1.redraw();
+			index2Profit.redraw();
 		}
 	});
 });
