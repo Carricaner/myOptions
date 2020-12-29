@@ -1,30 +1,30 @@
-const redis = require("redis")
-const client = redis.createClient()
+const redis = require("redis");
+const client = redis.createClient();
 
 
 const redisTurnOn = () => {
-    client.on("connect", () => {
+	client.on("connect", () => {
 		console.log("<< Redis: client connected >>");
 	});
-}
+};
 
-const redisClient = client
+const redisClient = client;
 
 const redisGet = (key) => {
-    return new Promise((resolve, reject) => {
+	return new Promise((resolve, reject) => {
 
-        client.get(key, (err, value) => {
-            if (err) {
-                reject(`Redis-set ${key} failed.`)
-            } else {
-                resolve(value)
-            }
+		client.get(key, (err, value) => {
+			if (err) {
+				reject(`Redis-set ${key} failed.`);
+			} else {
+				resolve(value);
+			}
 
-        })
+		});
 
-    })
+	});
 
-}
+};
 
 
 
@@ -43,7 +43,7 @@ const redisGet = (key) => {
 
 
 module.exports = {
-    redisTurnOn,
-    redisClient,
-    redisGet
-}
+	redisTurnOn,
+	redisClient,
+	redisGet
+};

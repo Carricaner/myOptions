@@ -1,18 +1,18 @@
-const router = require('express').Router();
+const router = require("express").Router();
 
 const { 
-    checkSignIn,
-    checkSignUp
-} = require('../controllers/user_controller')
+	checkSignIn,
+	checkSignUp
+} = require("../controllers/user_controller");
 
 
 
-router.route('/user/signIn')
-.post(checkSignIn)
+router.route("/user/signIn")
+	.post(checkSignIn);
 
 
-router.route('/user/signUp')
-.post(checkSignUp)
+router.route("/user/signUp")
+	.post(checkSignUp);
 
 
 

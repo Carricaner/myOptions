@@ -1,5 +1,5 @@
-const { liquidateAllUserParts } = require("./server/controllers/liquidate_controller")
+const { liquidateAllUserParts } = require("./server/controllers/liquidate_controller");
 
 
 
-liquidateAllUserParts(14500)
+liquidateAllUserParts(14500);

@@ -1,5 +1,5 @@
-const { flushRedisContainer } = require("./server/controllers/redisUpdate_controller")
+const { flushRedisContainer } = require("./server/controllers/redisUpdate_controller");
 
-flushRedisContainer("bigIndexContainer")
-flushRedisContainer("futureContainer")
+flushRedisContainer("bigIndexContainer");
+flushRedisContainer("futureContainer");
 

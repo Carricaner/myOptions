@@ -1,9 +1,9 @@
-require('dotenv').config();
+require("dotenv").config();
 
-//=====================<< Express Initialization >>=====================
-const express = require('express');
-const bodyparser = require('body-parser');
-const cors = require('cors');
+// =====================<< Express Initialization >>=====================
+const express = require("express");
+const bodyparser = require("body-parser");
+const cors = require("cors");
 const app = express();
 
 
@@ -14,57 +14,57 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-//=====================<< Use static files >>=====================
-app.use(express.static('public'));
+// =====================<< Use static files >>=====================
+app.use(express.static("public"));
 
 
 
-//=====================<< Socket.io >>=====================
+// =====================<< Socket.io >>=====================
 const server = require("http").createServer(app);
-const { deploySocket } = require("./util/util_socket.js")
-deploySocket(server)
+const { deploySocket } = require("./util/util_socket.js");
+deploySocket(server);
 
 
-//=====================<< CORS allow all >>=====================
+// =====================<< CORS allow all >>=====================
 app.use(cors());
 
 
 
-//=====================<< Redis >>=====================
-const { redisTurnOn } = require("./util/util_redis")
-redisTurnOn()
-const { startRedisRefresher } = require("./server/controllers/redisUpdate_controller")
-startRedisRefresher() // Turn on redis refresher
+// =====================<< Redis >>=====================
+const { redisTurnOn } = require("./util/util_redis");
+redisTurnOn();
+const { startRedisRefresher } = require("./server/controllers/redisUpdate_controller");
+startRedisRefresher(); // Turn on redis refresher
 
 
-//=====================<< API routes >>=====================
-app.use('/api/1.0',
+// =====================<< API routes >>=====================
+app.use("/api/1.0",
 	[
-		require('./server/routes/auth_route'),
-		require('./server/routes/profile_route'),
-		require('./server/routes/analysis_route'),
-		require('./server/routes/user_route'),
-		require('./server/routes/trade_route'),
-		require('./server/routes/admin_route'),
-		require('./server/routes/realtime_route'),
+		require("./server/routes/auth_route"),
+		require("./server/routes/profile_route"),
+		require("./server/routes/analysis_route"),
+		require("./server/routes/user_route"),
+		require("./server/routes/trade_route"),
+		require("./server/routes/admin_route"),
+		require("./server/routes/realtime_route"),
 	]
-)
+);
 
 
-//=====================<< Page not found >>=====================
+// =====================<< Page not found >>=====================
 app.use(function(req, res, next) {
-    res.status(404).sendFile(__dirname + '/public/404.html');
+	res.status(404).sendFile(__dirname + "/public/404.html");
 });
 
 
-//=====================<< Error handling >>=====================
+// =====================<< Error handling >>=====================
 app.use(function(err, req, res, next) {
-    console.log(err);
-    res.status(500).send('Internal Server Error');
+	console.log(err);
+	res.status(500).send("Internal Server Error");
 });
 
 server.listen(3000, () => {
-    console.log('<< Server: listening to port 3000 >>')
-})
+	console.log("<< Server: listening to port 3000 >>");
+});
 
 module.exports = { app };

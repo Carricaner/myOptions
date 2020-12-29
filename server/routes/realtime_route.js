@@ -1,11 +1,11 @@
-const router = require('express').Router();
+const router = require("express").Router();
 
-const { getIndex } = require('../controllers/realtime_controller')
+const { getIndex } = require("../controllers/realtime_controller");
 
 
 
-router.route('/realtime/getIndex')
-.get(getIndex);
+router.route("/realtime/getIndex")
+	.get(getIndex);
 
 
 

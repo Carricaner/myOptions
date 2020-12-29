@@ -1,13 +1,13 @@
-const router = require('express').Router();
+const router = require("express").Router();
 
 const { 
-    checkJWT
-} = require('../controllers/auth_controller')
+	checkJWT
+} = require("../controllers/auth_controller");
 
 
 
-router.route('/auth/checkJWT')
-.post(checkJWT)
+router.route("/auth/checkJWT")
+	.post(checkJWT);
 
 
 

@@ -1,9 +1,10 @@
-require('dotenv').config();
+require("dotenv").config();
 const mysql = require("mysql");
 
-//=====================<< MySQL >>=====================
+// =====================<< MySQL >>=====================
 const { 
-    // aws RDS mysql information
+
+	// aws RDS mysql information
 	aws_rds_mysql_HOST,
 	aws_rds_mysql_USER,
 	aws_rds_mysql_PASSWORD,
@@ -45,7 +46,7 @@ function mysqlUserSwitcher(des) {
 
 const pool = mysql.createPool(mysqlUserSwitcher("awsRDS"));
 
-//=====================<< SQL Promise >>=====================
+// =====================<< SQL Promise >>=====================
 const transPromise = function(sql, container = null, carrier = null) { 
 
 	// sql        ==> mySQL query sentence
@@ -83,8 +84,8 @@ const transPromise = function(sql, container = null, carrier = null) {
 
 
 module.exports = {
-    pool,
-    transPromise,
-}
+	pool,
+	transPromise,
+};
 
 

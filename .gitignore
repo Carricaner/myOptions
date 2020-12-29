@@ -25,3 +25,6 @@ testSQL.py
 
 #yml => load test
 *.yml
+
+#eslint
+.eslintrc*
