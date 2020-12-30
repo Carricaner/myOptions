@@ -17,14 +17,15 @@ debug.log
 /crawler/__pycache__
 /crawler/comp/__pycache__
 
-
-#experiment
+# experiment
 /experiment
 testSQL.py
 
-
-#yml => load test
+# yml => load test
 *.yml
 
-#eslint
+# eslint
 .eslintrc*
+
+# sql dump
+*sql

@@ -1,5 +1,4 @@
 // Highchart
-
 let options4bigIndex = {
 	chart: {
 		type: "area"
@@ -59,6 +58,7 @@ let options4future = {
 let bigIndex = new Highcharts.Chart("bigIndex", options4bigIndex);
 let future = new Highcharts.Chart("future", options4future);
 
+// ajax
 fetchPack("/api/1.0/realtime/getIndex", "GET")
 	.then(result => {
 
@@ -178,7 +178,7 @@ fetchPack("/api/1.0/realtime/getIndex", "GET")
 	});
 
 
-// ---------- socket part ----------
+// socket
 socket.on("bigIndexContainer", (receiver) => {    
 
 	// update options

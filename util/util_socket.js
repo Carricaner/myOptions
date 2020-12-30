@@ -1,13 +1,11 @@
 const io = require("socket.io");
 const { redisClient } = require("./util_redis");
 const { getNowTime } = require("./util_timezone");
-var moment = require("moment-timezone");
 
 
 const deploySocket = (server) => {
 	const serverIo = io(server);
 	serverIo.on("connection", (socket) => {
-		console.log("a user connected");
 
 		// periodical emitter
 		setInterval(() => {
@@ -36,7 +34,7 @@ const deploySocket = (server) => {
 				);
 			});
 
-			// 統一時間
+			// united time
 			socket.emit(
 				"time",
 				getNowTime()
@@ -44,18 +42,9 @@ const deploySocket = (server) => {
 
 		}, 5*1000);
 
-
-		// disconnection
-		socket.on("disconnect", () => {
-			console.log("a user disconnected");
-		});
-
 	});
 
 };
-
-
-
 
 
 

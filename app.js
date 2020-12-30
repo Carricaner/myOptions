@@ -2,11 +2,8 @@ require("dotenv").config();
 
 // =====================<< Express Initialization >>=====================
 const express = require("express");
-const bodyparser = require("body-parser");
 const cors = require("cors");
 const app = express();
-
-
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
@@ -29,12 +26,15 @@ deploySocket(server);
 app.use(cors());
 
 
-
 // =====================<< Redis >>=====================
 const { redisTurnOn } = require("./util/util_redis");
+
+// Turn on redis
 redisTurnOn();
 const { startRedisRefresher } = require("./server/controllers/redisUpdate_controller");
-startRedisRefresher(); // Turn on redis refresher
+
+// Turn on redis refresher
+startRedisRefresher(); 
 
 
 // =====================<< API routes >>=====================
@@ -45,7 +45,6 @@ app.use("/api/1.0",
 		require("./server/routes/analysis_route"),
 		require("./server/routes/user_route"),
 		require("./server/routes/trade_route"),
-		require("./server/routes/admin_route"),
 		require("./server/routes/realtime_route"),
 	]
 );

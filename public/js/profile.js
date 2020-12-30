@@ -23,23 +23,8 @@ const winRatebadge = document.querySelector("#winRatebadge");
 const tooltip = document.querySelectorAll("#tooltip");
 
 
-// ---------- functions ----------
-// Rolling Number 
-const countToNumber = function (element, number, suffix, duration) {
-	$({count: parseInt(element.text().split("+")[0].replace(/\,/g, ""))}).animate({count: number}, {
-		duration: duration ? duration : 1000,
-		easing: "swing", 
-		step: function (now) {
-			element.text((Math.floor(now) + suffix).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
-		},
-		complete: function () {
-			countingFromZero = false;
-		}
-	});
-};
-
-// ---------- Listeners ----------
-// for SignOut
+// ==================== [ Listeners ] ====================
+// SignOut Listener
 signout.addEventListener("click", ()=>{
 	localStorage.removeItem("Authorization");
 	swal({
@@ -54,8 +39,8 @@ signout.addEventListener("click", ()=>{
 
 
 
-// ---------- Execution ----------
-// Identify User
+// ==================== [ Ajax ] ====================
+// user authentication
 checkTokenWhileWindowLoad(token)
 	.then(result => {
 		const { msg } = result;
@@ -164,7 +149,7 @@ checkTokenWhileWindowLoad(token)
 	});
 
 
-// ---------- highcharts ----------
+// Highcharts
 var options4cpPie = {
 	chart: {
 		plotBackgroundColor: null,
@@ -318,7 +303,7 @@ var cpRate = Highcharts.chart("cpRate", options4cpPie);
 var userPerformance1 = Highcharts.chart("performance1", options4performance1);
 var userPerformance2 = Highcharts.chart("performance2", options4performance2);
 
-//  ---------- popovers ----------
+// Popovers
 const DOMarr = [
 	[fluidbadge, tooltip[0]],
 	[totalBenefitbadge, tooltip[1]],

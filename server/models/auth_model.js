@@ -1,21 +1,7 @@
 const { transPromise } = require("./mysql");
 
 
-const sqlGetUser = (lookupArray) => {
-	let lookupString = ``;
-	for (let i = 0; i < lookupArray.length; i++) {
-		if (i == lookupArray.length - 1) {
-			lookupString += `${lookupArray[i]}`;
-		} else {
-			lookupString += `${lookupArray[i]}, `;
-		}
-	}
-	return transPromise(`SELECT ${lookupString} FROM users;`)
-		.then(result => { return result.result; });
-};
-
-
-const sqlGetUserWithSpecificEmail = (email, localorfb) => {
+const sqlGetUserWithEmail = (email, localorfb) => {
 	return transPromise(`SELECT * FROM users WHERE email = '${email}' AND localorfb = '${localorfb}';`)
 		.then(result => { return result.result; });
 };
@@ -34,10 +20,8 @@ const sqlCreateANewMoneyLeft = (user) => {
 
 
 
-
 module.exports = {
-	sqlGetUser,
-	sqlGetUserWithSpecificEmail,
+	sqlGetUserWithEmail,
 	sqlInsertUser,
 	sqlCreateANewMoneyLeft,
 };

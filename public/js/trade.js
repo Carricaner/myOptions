@@ -1,4 +1,4 @@
-// ---------- jQuery for sticky theads ---------- 
+// sticky thead for tables
 applyFrozenTablehead(".tableFixHead1")
 applyFrozenTablehead(".tableFixHead2")
 
@@ -12,19 +12,18 @@ applyInnerHrefAnimationListener(optDisPriceSelector, 120, 400)
 applyInnerHrefAnimationListener(userPartSelector, 120, 500)
 
 
-// ---------- global data for Trade ----------
+// trade parameters
 let optDis = 0;
 let userParts = 0;
 let optDisNameSeq = ["call_var", "call_deal", "call_sell", "call_buy", "target", "put_buy", "put_sell", "put_deal", "put_var"];
 let userPartsNameSeq = ["prod_month", "prod_target", "prod_act", "prod_cp", "prod_number", "prod_cost"];
 let isOpen = false;
 
-
 const tbody4OptDis = document.querySelector("#optDisTable table tbody");
 const tbody4UserPart = document.querySelector("#user-part > div > table > tbody");
 const userPartsRegion = document.querySelector("body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(4) > a");
 
-// ---------- socket part ----------
+// socket
 socket.on("realtimeOpt", (receiver) => {
 
 	optDis = receiver;
@@ -42,13 +41,13 @@ socket.on("realtimeOpt", (receiver) => {
 				let fillContent = data[i][optDisNameSeq[j-1]];
 				if (2 <= j && j <= 8) {
 
-					// 除了漲跌不用之外，數字假如更動要閃爍
+					// flash
 					if (tds[j].innerText != "" && tds[j].innerText != data[i][optDisNameSeq[j-1]]) {
 						applyFlashBackground(tds[j], 2000);
 					}                  
 				} else {
 
-					// 漲跌需要隨時更新顏色
+					// change up's & down's colors
 					if (fillContent > 0) {
 						tds[j].style.color = "blue";
 					} else if (fillContent < 0) {
@@ -102,7 +101,7 @@ socket.on("time", (receiver) => {
 });
 
 
-// ---------- check authentication ----------
+// user authentication
 checkTokenWhileWindowLoad(token)
 	.then(result => {
 		const { msg } = result;
@@ -151,6 +150,7 @@ checkTokenWhileWindowLoad(token)
 		if (isOpenOnWeedays || isOpenOnSaturday) {
 			isOpen = true;
 		}
+
 		return fetchPack("/api/1.0/realtime/getIndex", "GET");
 	})
 	.then(result => {
@@ -188,7 +188,6 @@ checkTokenWhileWindowLoad(token)
 
 
 // functions
-
 const nowPriceGetter = (optDis, target, cp) => {
 	for (let i = 0; i < optDis.data.length; i++) {
 		if (optDis.data[i].target == target) {

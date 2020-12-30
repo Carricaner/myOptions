@@ -1,4 +1,4 @@
-// ---------- check authentication ----------
+// user authentication
 checkTokenWhileWindowLoad(token)
 	.then(result => {
 		const { msg } = result;

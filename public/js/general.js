@@ -1,5 +1,5 @@
 /*
-The js file contains general used functions etc.
+The js file contains general used variables, functions and etc.
 */
 
 
