@@ -75,7 +75,7 @@ checkTokenWhileWindowLoad(token)
 		registerTimeString.textContent = `註冊日期: ${created_at}`;
 		return Promise.all(
 			[
-				fetchPack("api/1.0/user/showUserMoneyLeftnTotalprofit", "POST", body = { userId }),
+				fetchPack("api/1.0/trade/showUserMoneyLeftnTotalprofit", "POST", body = { userId }),
 				fetchPack("api/1.0/profile/analyzeUserHistoricParts", "POST", body = { userId })
 			]
 		);

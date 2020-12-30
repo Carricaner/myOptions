@@ -41,6 +41,7 @@ startRedisRefresher();
 app.use("/api/1.0",
 	[
 		require("./server/routes/auth_route"),
+		require("./server/routes/time_route"),
 		require("./server/routes/profile_route"),
 		require("./server/routes/analysis_route"),
 		require("./server/routes/user_route"),

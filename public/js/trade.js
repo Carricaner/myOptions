@@ -111,7 +111,7 @@ checkTokenWhileWindowLoad(token)
 			navSignIn.textContent = `個人頁面`;
 			navSignIn.className = "btn btn-success";
 			navSignIn.href = "profile.html";
-			return fetchPack("/api/1.0/user/getBackEndTime", "GET");
+			return fetchPack("/api/1.0/time/getBackEndTime", "GET");
 		} else if (msg == "expire") {
 			swal({
 				title: "登入逾期",
@@ -164,7 +164,7 @@ checkTokenWhileWindowLoad(token)
 		const btns = document.querySelectorAll("button.buy");
 		btns.forEach(btn => { btn.addEventListener("click", clickBuy); });
 
-		return fetchPack("/api/1.0/user/showUserParts", "POST", {userId: userId});
+		return fetchPack("/api/1.0/trade/showUserParts", "POST", {userId: userId});
 	})
 	.then(result => {
 		userParts = result;
@@ -175,7 +175,7 @@ checkTokenWhileWindowLoad(token)
 		const btns = document.querySelectorAll("button.liquidation");
 		btns.forEach(btn => { btn.addEventListener("click", click2LiquidateParts); });
     
-		return fetchPack("/api/1.0/user/showUserMoneyLeftnTotalprofit", "POST", {userId: userId});
+		return fetchPack("/api/1.0/trade/showUserMoneyLeftnTotalprofit", "POST", {userId: userId});
 	})
 	.then(result => {
 		const userMoneyLeftDiv = document.querySelector("#money-left");
@@ -252,7 +252,7 @@ const clickBuy = (e) => {
 		const allBuyInputs = document.querySelectorAll(".buyInput");
 		allBuyInputs.forEach(input => input.disabled = true);
 
-		fetchPack("/api/1.0/user/buyParts", "POST", carton)
+		fetchPack("/api/1.0/trade/buyParts", "POST", carton)
 			.then(result => {
 				if (result.msg == "success") {
 					swal({
@@ -306,7 +306,7 @@ const click2LiquidateParts = (e) => {
 		const allLiquidateBtn = document.querySelectorAll(".liquidation");
 		allLiquidateBtn.forEach(btn => btn.disabled = true);
 
-		fetchPack("/api/1.0/user/liquidateParts", "POST", carton)
+		fetchPack("/api/1.0/trade/liquidateParts", "POST", carton)
 			.then(result => {
 				return swal({
 					title: "平倉成功",
@@ -448,7 +448,7 @@ const showUserMoneyLeftnTotalProfit = (result, div) => {
 
 
 const updateUserMoneynParts = (userId) => {
-	fetchPack("/api/1.0/user/showUserParts", "POST", {userId: userId})
+	fetchPack("/api/1.0/trade/showUserParts", "POST", {userId: userId})
 		.then(result => {
 			userParts = result;
 			const tbody4UserPart = document.querySelector("#user-part > div > table > tbody"); 
@@ -458,7 +458,7 @@ const updateUserMoneynParts = (userId) => {
 			const btns = document.querySelectorAll("button.liquidation");
 			btns.forEach(btn => { btn.addEventListener("click", click2LiquidateParts); });
 
-			return fetchPack("/api/1.0/user/showUserMoneyLeftnTotalprofit", "POST", {userId: userId});
+			return fetchPack("/api/1.0/trade/showUserMoneyLeftnTotalprofit", "POST", {userId: userId});
 		})
 		.then(result => {
 			const userMoneyLeftDiv = document.querySelector("#money-left");

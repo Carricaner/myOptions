@@ -1,7 +1,6 @@
 const router = require("express").Router();
 
 const { 
-	getBackEndTime,
 	buyParts,
 	showUserParts,
 	updateUserPartsnMoneyLeft,
@@ -9,23 +8,19 @@ const {
 } = require("../controllers/trade_controller");
 
 
-router.route("/user/getBackEndTime")
-	.get(getBackEndTime);
-
-
-router.route("/user/buyParts")
+router.route("/trade/buyParts")
 	.post(buyParts);
 
 
-router.route("/user/showUserParts")
+router.route("/trade/showUserParts")
 	.post(showUserParts);
 
 
-router.route("/user/liquidateParts")
+router.route("/trade/liquidateParts")
 	.post(updateUserPartsnMoneyLeft);
 
 
-router.route("/user/showUserMoneyLeftnTotalprofit")
+router.route("/trade/showUserMoneyLeftnTotalprofit")
 	.post(showUserMoneyLeftnTotalprofit);
 
 
