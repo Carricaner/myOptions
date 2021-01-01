@@ -58,8 +58,8 @@ const transPromise = function(sql, container = null, carrier = null) {
 		return new Promise((resolve, reject) => {
 			pool.query(condition, (err, result) => {
 				if(err) {
-					console.log("<< Error in Promise! >>");
-					reject("< Error in Promise!>");
+					console.log(err.message);
+					reject(err);
 				} else {
 					let shuttle = {
 						result: result,

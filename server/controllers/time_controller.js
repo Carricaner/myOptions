@@ -4,7 +4,11 @@ const {
 
 
 const getBackEndTime = (req, res) => {
-	res.send(getNowTime());
+	try {
+		res.send(getNowTime());
+	} catch (excep) {
+		res.send({msg: "fail"})
+	}
 };
 
 

@@ -104,85 +104,131 @@ socket.on("time", (receiver) => {
 // user authentication
 checkTokenWhileWindowLoad(token)
 	.then(result => {
-		const { msg } = result;
-		const navSignIn = document.querySelector("#navbarResponsive > ul > li:nth-child(4) > a");
+		try {
+			const { msg } = result;
+			const navSignIn = document.querySelector("#navbarResponsive > ul > li:nth-child(4) > a");
 
-		if (msg == "valid") {
-			navSignIn.textContent = `個人頁面`;
-			navSignIn.className = "btn btn-success";
-			navSignIn.href = "profile.html";
-			return fetchPack("/api/1.0/time/getBackEndTime", "GET");
-		} else if (msg == "expire") {
+			if (msg == "valid") {
+				navSignIn.textContent = `個人頁面`;
+				navSignIn.className = "btn btn-success";
+				navSignIn.href = "profile.html";
+				return fetchPack("/api/1.0/time/getBackEndTime", "GET");
+			} else {
+				throw new Error(msg)
+			}
+		} catch (excep) {
+			throw new Error(excep.message)
+		}
+	})
+	.then(result => {
+		try {
+			if (result.msg != "fail") {
+				let {
+					dateOfWeek,
+					isDay,
+					isNight,
+					nowHour,
+				} = result;
+		
+				const weekdaysArray = [1, 2, 3, 4, 5];
+				let isTradeTime = isDay || isNight;
+				let isOpenOnWeedays = weekdaysArray.includes(result.dateOfWeek) && isTradeTime;
+				let isOpenOnSaturday = dateOfWeek == 6 && nowHour <= 5;
+		
+				if (isOpenOnWeedays || isOpenOnSaturday) {
+					isOpen = true;
+				}
+				
+				return fetchPack("/api/1.0/realtime/getIndex", "GET");
+			} else {
+				throw new Error(result.msg)
+			}	
+
+		} catch (excep) {
+			if (result.msg == "fail") {
+				throw new Error("Current Time Derivation Error")
+			}
+		}
+
+	})
+	.then(result => {
+		try {
+			// ---------- render OptDis ----------
+			optDis = result.optDis;
+			let { data } = result.optDis;
+			showOptDisInTable(data, tbody4OptDis);
+			const btns = document.querySelectorAll("button.buy");
+			btns.forEach(btn => { btn.addEventListener("click", clickBuy); });
+			return fetchPack("/api/1.0/trade/showUserParts", "POST", {userId: userId});
+
+		} catch (excep) {
+			throw new Error("Option Price Error")
+		}	
+	})
+	.then(result => {
+		try {
+			userParts = result;
+			// ---------- render User Parts ----------
+			showUserPartsInTable(result, tbody4UserPart);
+			const btns = document.querySelectorAll("button.liquidation");
+			btns.forEach(btn => { btn.addEventListener("click", click2LiquidateParts); });
+			return fetchPack("/api/1.0/trade/showUserMoneyLeftnTotalprofit", "POST", {userId: userId});
+		
+		} catch (excep) {
+			throw new Error("User Part Error")
+		}
+	})
+	.then(result => {
+		try {
+			const userMoneyLeftDiv = document.querySelector("#money-left");
+			showUserMoneyLeftnTotalProfit(result, userMoneyLeftDiv);
+
+		} catch (excep) {
+			throw new Error("User Money Error")
+		}
+	})
+	.catch((excep) => {
+		if (excep.message == "expire") {
 			swal({
 				title: "登入逾期",
 				text: "請重新登入",
 				icon: "warning",
 				button: "確認"
 			})
-				.then(result => {
+				.then(() => {
 					window.location.href = `${protocol}//${domain}` + "/signin.html";
 				});
-		} else {
+		} else if (excep.message == "empty") {
 			swal({
 				title: "未能辨別使用者",
 				text: "請先登入",
 				icon: "warning",
 				button: "確認"
 			})
-				.then(result => {
+				.then(() => {
 					window.location.href = `${protocol}//${domain}` + "/signin.html";
 				});
+		} else if (excep.message == "Current Time Derivation Error") {
+			swal({
+				title: "Error",
+				text: `${excep.message}`,
+				icon: "error",
+				button: "確認返回首頁"
+			})
+				.then(() => {
+					window.location.href = `${protocol}//${domain}` + "/index.html";
+				});
+		} else {
+			swal({
+				title: "Error",
+				text: "User's Information Error",
+				icon: "error",
+				button: "確認返回首頁"
+			})
+				.then(() => {
+					window.location.href = `${protocol}//${domain}` + "/index.html";
+				});
 		}
-	})
-	.then(result => {
-		let {
-			dateOfWeek,
-			isDay,
-			isNight,
-			nowHour,
-		} = result;
-
-		const weekdaysArray = [1, 2, 3, 4, 5];
-		let isTradeTime = isDay || isNight;
-		let isOpenOnWeedays = weekdaysArray.includes(result.dateOfWeek) && isTradeTime;
-		let isOpenOnSaturday = dateOfWeek == 6 && nowHour <= 5;
-
-		if (isOpenOnWeedays || isOpenOnSaturday) {
-			isOpen = true;
-		}
-
-		return fetchPack("/api/1.0/realtime/getIndex", "GET");
-	})
-	.then(result => {
-
-		// ---------- render OptDis ----------
-		optDis = result.optDis;
-		let { data } = result.optDis;
-    
-		showOptDisInTable(data, tbody4OptDis);
-
-		const btns = document.querySelectorAll("button.buy");
-		btns.forEach(btn => { btn.addEventListener("click", clickBuy); });
-
-		return fetchPack("/api/1.0/trade/showUserParts", "POST", {userId: userId});
-	})
-	.then(result => {
-		userParts = result;
-
-		// ---------- render User Parts ----------
-		showUserPartsInTable(result, tbody4UserPart);
-
-		const btns = document.querySelectorAll("button.liquidation");
-		btns.forEach(btn => { btn.addEventListener("click", click2LiquidateParts); });
-    
-		return fetchPack("/api/1.0/trade/showUserMoneyLeftnTotalprofit", "POST", {userId: userId});
-	})
-	.then(result => {
-		const userMoneyLeftDiv = document.querySelector("#money-left");
-		showUserMoneyLeftnTotalProfit(result, userMoneyLeftDiv);
-	})
-	.catch(() => {
-		console.log("The error occurs...")
 	});
 
 
