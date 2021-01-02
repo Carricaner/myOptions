@@ -275,7 +275,7 @@ const clickBuy = (e) => {
 		cost: Number(cost.innerText),
 	};
     
-	if (!isOpen) {
+	if (isOpen) {
 		swal({
 			title: "收盤時間，停止交易",
 			icon: "warning",
@@ -295,31 +295,46 @@ const clickBuy = (e) => {
 			button: "確認"
 		});
 	} else {
-		const allBuyInputs = document.querySelectorAll(".buyInput");
-		allBuyInputs.forEach(input => input.disabled = true);
-
-		fetchPack("/api/1.0/trade/buyParts", "POST", carton)
-			.then(result => {
-				if (result.msg == "success") {
-					swal({
-						title: "購買成功",
-						icon: "success",
-						button: "確認"
-					})
-						.then(result => {
-							allBuyInputs.forEach(input => input.disabled = false);
-							userPartsRegion.click();
-							updateUserMoneynParts(userId);
-						});
-				} else {
-					swal({
-						title: "餘額不足",
-						icon: "warning",
-						button: "確認"
-					});
-				}
-			});
-   
+		try {
+			const allBuyInputs = document.querySelectorAll(".buyInput");
+			allBuyInputs.forEach(input => input.disabled = true);
+			fetchPack("/api/1.0/trade/buyParts", "POST", carton)
+				.then(result => {
+					if (result.msg == "success") {
+						swal({
+							title: "購買成功",
+							icon: "success",
+							button: "確認"
+						})
+							.then(() => {
+								allBuyInputs.forEach(input => input.disabled = false);
+								userPartsRegion.click();
+								updateUserMoneynParts(userId);
+							});
+					} else if (result.msg == "notEnough") {
+						swal({
+							title: "餘額不足",
+							icon: "warning",
+							button: "確認"
+						})
+							.then(() => {
+								allBuyInputs.forEach(input => input.disabled = false);
+							});
+					} else {
+						throw new Error()
+					}
+				});
+		} catch {
+			swal({
+				title: "Error",
+				text: "購買錯誤",
+				icon: "error",
+				button: "確認"
+			})
+				.then(() => {
+					allBuyInputs.forEach(input => input.disabled = false);
+				});
+		}
 	}
 	input.value = "";
 };
@@ -327,42 +342,58 @@ const clickBuy = (e) => {
 
 const click2LiquidateParts = (e) => {
 	const tableString = `#user-part > div > table > tbody > `;
-	let numberOfRow = e.path[1].rowIndex;
-	let partId = userParts[numberOfRow-1].id;
-	let userId = userParts[numberOfRow-1].user_id;
-	let number = Number(document.querySelector(tableString + `tr:nth-child(${numberOfRow}) > td:nth-child(5)`).innerText);
-	let nowPrice = Number(document.querySelector(tableString + `tr:nth-child(${numberOfRow}) > td:nth-child(7)`).innerText);
-	let profit = Number(document.querySelector(tableString + `tr:nth-child(${numberOfRow}) > td:nth-child(8)`).innerText);
-
-	let carton = {
-		partId: partId,
-		userId: userId,
-		number: number,
-		nowPrice: nowPrice,
-		profit: profit
-	};
-
-	if (!isOpen) {
+	try {
+		if (!isOpen) {
+			swal({
+				title: "收盤時間，停止交易",
+				icon: "warning",
+				button: "確認"
+			});
+		} else {
+			const allLiquidateBtn = document.querySelectorAll(".liquidation");
+			allLiquidateBtn.forEach(btn => btn.disabled = true);
+	
+			const numberOfRow = e.path[1].rowIndex;
+			const partId = userParts[numberOfRow-1].id;
+			const userId = userParts[numberOfRow-1].user_id;
+			const number = Number(document.querySelector(tableString + `tr:nth-child(${numberOfRow}) > td:nth-child(5)`).innerText);
+			const nowPrice = Number(document.querySelector(tableString + `tr:nth-child(${numberOfRow}) > td:nth-child(7)`).innerText);
+			const profit = Number(document.querySelector(tableString + `tr:nth-child(${numberOfRow}) > td:nth-child(8)`).innerText);
+	
+			const carton = {
+				partId: partId,
+				userId: userId,
+				number: number,
+				nowPrice: nowPrice,
+				profit: profit
+			};
+			
+			fetchPack("/api/1.0/trade/liquidateParts", "POST", carton)
+				.then(result => {
+					if (result.msg == "success") {
+						swal({
+							title: "平倉成功",
+							icon: "success",
+							button: "確認"
+						})
+							.then(result => {
+								allLiquidateBtn.forEach(btn => btn.disabled = false);
+								updateUserMoneynParts(userId);
+							});
+					} else {
+						throw new Error()
+					}
+				})
+		}
+	} catch {
 		swal({
-			title: "收盤時間，停止交易",
-			icon: "warning",
-			button: "確認"
-		});
-	} else {
-		const allLiquidateBtn = document.querySelectorAll(".liquidation");
-		allLiquidateBtn.forEach(btn => btn.disabled = true);
-
-		fetchPack("/api/1.0/trade/liquidateParts", "POST", carton)
-			.then(result => {
-				return swal({
-					title: "平倉成功",
-					icon: "success",
-					button: "確認"
-				});
-			})
-			.then(result => {
+			title: "平倉失敗",
+			icon: "error",
+			button: "確認返回"
+		})
+			.then(() => {
+				const allLiquidateBtn = document.querySelectorAll(".liquidation");
 				allLiquidateBtn.forEach(btn => btn.disabled = false);
-				updateUserMoneynParts(userId);
 			});
 	}
 };
