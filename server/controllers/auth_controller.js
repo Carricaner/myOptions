@@ -9,7 +9,7 @@ const {
 
 const {
 	filterSpecialNotation,
-} = require("../../util/util_regexp")
+} = require("../../util/util_regexp");
 
 const {
 	sqlGetUserWithEmail,

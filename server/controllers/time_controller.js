@@ -7,7 +7,7 @@ const getBackEndTime = (req, res) => {
 	try {
 		res.send(getNowTime());
 	} catch (excep) {
-		res.send({msg: "fail"})
+		res.send({msg: "fail"});
 	}
 };
 

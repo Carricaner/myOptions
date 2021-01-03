@@ -4,7 +4,7 @@
   "description": "Appworks School Batch#12 Personal Project --Darren Li",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
     "socket.io": "^3.0.3"
   },
   "devDependencies": {
-    "eslint": "^7.16.0"
+    "eslint": "^7.16.0",
+    "mocha": "^8.2.1"
   }
 }

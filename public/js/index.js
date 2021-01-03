@@ -15,8 +15,8 @@ checkTokenWhileWindowLoad(token)
 
 
 // inner href anamation
-applyInnerHrefAnimationListener("#navbarResponsive > ul > li:nth-child(1) > a", 110, 300)
-applyInnerHrefAnimationListener("#carouselExampleIndicators > div > div:nth-child(2) > div > a", 110, 300)
+applyInnerHrefAnimationListener("#navbarResponsive > ul > li:nth-child(1) > a", 110, 300);
+applyInnerHrefAnimationListener("#carouselExampleIndicators > div > div:nth-child(2) > div > a", 110, 300);
 
 
 // Highchart

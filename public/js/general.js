@@ -51,7 +51,7 @@ const checkTokenWhileWindowLoad = (token) => {
 			}
 		};
 	});
-}
+};
 
 
 // << Inner-paged href# Animation >>
@@ -59,7 +59,7 @@ const applyInnerHrefAnimationListener = (selector, distance2top, secs) => {
 	$(selector).bind("click touch", function () {
 		$("html,body").animate({scrollTop: ($($(this).attr("href")).offset().top - distance2top)}, secs);
 	});
-}
+};
 
 
 // << Rolling number animation >>
@@ -83,7 +83,7 @@ const applyFrozenTablehead = (tableheadSelector) => {
 	$(tableheadSelector).on("scroll", function() {
 		$th.css("transform", "translateY("+ this.scrollTop +"px)");
 	});
-}
+};
 
 
 // Flash background => The css which has .flashOnce should be involved in the HTML containing the desired DOM.  

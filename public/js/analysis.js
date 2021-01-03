@@ -334,12 +334,12 @@ var staticBigguyCost = Highcharts.chart("plot4", options4BigguyCost);
 
 
 // inner href anamation
-const bigIndexSelector = "body > div > ul > li:nth-child(1) > a"
-const optDisSelector = "body > div > ul > li:nth-child(2) > a"
-const bigguyUnitSelector = "body > div > ul > li:nth-child(3) > a"
-const bigguyCostSelector = "body > div > ul > li:nth-child(4) > a"
+const bigIndexSelector = "body > div > ul > li:nth-child(1) > a";
+const optDisSelector = "body > div > ul > li:nth-child(2) > a";
+const bigguyUnitSelector = "body > div > ul > li:nth-child(3) > a";
+const bigguyCostSelector = "body > div > ul > li:nth-child(4) > a";
 
-applyInnerHrefAnimationListener(bigIndexSelector, 120, 300)
-applyInnerHrefAnimationListener(optDisSelector, 120, 400)
-applyInnerHrefAnimationListener(bigguyUnitSelector, 120, 600)
-applyInnerHrefAnimationListener(bigguyCostSelector, 120, 700)
+applyInnerHrefAnimationListener(bigIndexSelector, 120, 300);
+applyInnerHrefAnimationListener(optDisSelector, 120, 400);
+applyInnerHrefAnimationListener(bigguyUnitSelector, 120, 600);
+applyInnerHrefAnimationListener(bigguyCostSelector, 120, 700);

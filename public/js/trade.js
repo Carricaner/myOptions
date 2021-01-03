@@ -1,15 +1,15 @@
 // sticky thead for tables
-applyFrozenTablehead(".tableFixHead1")
-applyFrozenTablehead(".tableFixHead2")
+applyFrozenTablehead(".tableFixHead1");
+applyFrozenTablehead(".tableFixHead2");
 
 
 // inner href anamation
-const realtimeIndexSelector = "body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(2) > a"
-const optDisPriceSelector = "body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(3) > a"
-const userPartSelector = "body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(4) > a"
-applyInnerHrefAnimationListener(realtimeIndexSelector, 120, 300)
-applyInnerHrefAnimationListener(optDisPriceSelector, 120, 400)
-applyInnerHrefAnimationListener(userPartSelector, 120, 500)
+const realtimeIndexSelector = "body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(2) > a";
+const optDisPriceSelector = "body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(3) > a";
+const userPartSelector = "body > div > div:nth-child(1) > div.col-lg-4.text-center.mt-5.mb-3 > div > ul > li:nth-child(4) > a";
+applyInnerHrefAnimationListener(realtimeIndexSelector, 120, 300);
+applyInnerHrefAnimationListener(optDisPriceSelector, 120, 400);
+applyInnerHrefAnimationListener(userPartSelector, 120, 500);
 
 
 // trade parameters
@@ -114,10 +114,10 @@ checkTokenWhileWindowLoad(token)
 				navSignIn.href = "profile.html";
 				return fetchPack("/api/1.0/time/getBackEndTime", "GET");
 			} else {
-				throw new Error(msg)
+				throw new Error(msg);
 			}
 		} catch (excep) {
-			throw new Error(excep.message)
+			throw new Error(excep.message);
 		}
 	})
 	.then(result => {
@@ -141,18 +141,19 @@ checkTokenWhileWindowLoad(token)
 				
 				return fetchPack("/api/1.0/realtime/getIndex", "GET");
 			} else {
-				throw new Error(result.msg)
+				throw new Error(result.msg);
 			}	
 
 		} catch (excep) {
 			if (result.msg == "fail") {
-				throw new Error("Current Time Derivation Error")
+				throw new Error("Current Time Derivation Error");
 			}
 		}
 
 	})
 	.then(result => {
 		try {
+
 			// ---------- render OptDis ----------
 			optDis = result.optDis;
 			let { data } = result.optDis;
@@ -162,12 +163,13 @@ checkTokenWhileWindowLoad(token)
 			return fetchPack("/api/1.0/trade/showUserParts", "POST", {userId: userId});
 
 		} catch (excep) {
-			throw new Error("Option Price Error")
+			throw new Error("Option Price Error");
 		}	
 	})
 	.then(result => {
 		try {
 			userParts = result;
+
 			// ---------- render User Parts ----------
 			showUserPartsInTable(result, tbody4UserPart);
 			const btns = document.querySelectorAll("button.liquidation");
@@ -175,7 +177,7 @@ checkTokenWhileWindowLoad(token)
 			return fetchPack("/api/1.0/trade/showUserMoneyLeftnTotalprofit", "POST", {userId: userId});
 		
 		} catch (excep) {
-			throw new Error("User Part Error")
+			throw new Error("User Part Error");
 		}
 	})
 	.then(result => {
@@ -184,7 +186,7 @@ checkTokenWhileWindowLoad(token)
 			showUserMoneyLeftnTotalProfit(result, userMoneyLeftDiv);
 
 		} catch (excep) {
-			throw new Error("User Money Error")
+			throw new Error("User Money Error");
 		}
 	})
 	.catch((excep) => {
@@ -275,7 +277,7 @@ const clickBuy = (e) => {
 		cost: Number(cost.innerText),
 	};
     
-	if (isOpen) {
+	if (!isOpen) {
 		swal({
 			title: "收盤時間，停止交易",
 			icon: "warning",
@@ -321,7 +323,7 @@ const clickBuy = (e) => {
 								allBuyInputs.forEach(input => input.disabled = false);
 							});
 					} else {
-						throw new Error()
+						throw new Error();
 					}
 				});
 		} catch {
@@ -381,9 +383,9 @@ const click2LiquidateParts = (e) => {
 								updateUserMoneynParts(userId);
 							});
 					} else {
-						throw new Error()
+						throw new Error();
 					}
-				})
+				});
 		}
 	} catch {
 		swal({

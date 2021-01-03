@@ -15,7 +15,7 @@ const getIndex = async (req, res) => {
 		};
 		res.status(200).send(transfer);
 	} catch {
-		res.send({msg: "fail"})
+		res.send({msg: "fail"});
 	}
 };
 

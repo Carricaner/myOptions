@@ -42,17 +42,17 @@ const buyParts = (req, res) => {
 					};
 					sqlAddUserParts(userPart);
 					sqlDeductUserMoneyLeft([moneyLeft-moneySpent, moneynprofitId]);
-					res.send({msg: "success"})
+					res.send({msg: "success"});
 				} else {
-					res.send({msg: "notEnough"})
+					res.send({msg: "notEnough"});
 				}
 			})
 			.catch(() => {
-				throw new Error()
-			})
+				throw new Error();
+			});
 
 	} catch (excep) {
-		res.send({msg: "error"})
+		res.send({msg: "error"});
 	}
 	
 };
@@ -93,10 +93,10 @@ const updateUserPartsnMoneyLeft = (req, res) => {
 				res.send({msg: "success"});
 			})
 			.catch(() => {
-				throw new Error()
+				throw new Error();
 			});
 	} catch (excep) {
-		res.send({msg: "fail"})
+		res.send({msg: "fail"});
 	}
 };
 

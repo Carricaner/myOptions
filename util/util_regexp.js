@@ -6,7 +6,7 @@ const filterSpecialNotation = (str) => {
 		afterStr += str.substr(i, 1).replace(pattern, ``); 
 	}
 	return afterStr;
-}
+};
 
 
 module.exports = {
