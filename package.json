@@ -4,7 +4,8 @@
   "description": "Appworks School Batch#12 Personal Project --Darren Li",
   "main": "app.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "lint" : "eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,8 @@
     "aws-sdk": "^2.799.0",
     "axios": "^0.21.0",
     "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "csv-parser": "^2.3.3",
@@ -35,10 +38,13 @@
     "mysql": "^2.18.1",
     "nodemon": "^2.0.6",
     "redis": "^3.0.2",
+    "should": "^13.2.3",
+    "sinon": "^9.2.2",
     "socket.io": "^3.0.3"
   },
   "devDependencies": {
     "eslint": "^7.16.0",
-    "mocha": "^8.2.1"
+    "mocha": "*",
+    "chai": "*"
   }
 }

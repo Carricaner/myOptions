@@ -1,4 +1,11 @@
 require("dotenv").config();
+const {
+	PORT_TEST, 
+	PORT, 
+	NODE_ENV, 
+	API_VERSION
+} = process.env;
+const port = NODE_ENV == "test" ? PORT_TEST : PORT;
 
 // =====================<< Express Initialization >>=====================
 const express = require("express");
@@ -38,7 +45,7 @@ startRedisRefresher();
 
 
 // =====================<< API routes >>=====================
-app.use("/api/1.0",
+app.use("/api/" + API_VERSION,
 	[
 		require("./server/routes/auth_route"),
 		require("./server/routes/time_route"),
@@ -63,8 +70,12 @@ app.use(function(err, req, res, next) {
 	res.status(500).send("Internal Server Error");
 });
 
-server.listen(3000, () => {
-	console.log("<< Server: listening to port 3000 >>");
-});
+
+if (NODE_ENV != "production") {
+	server.listen(port, () => {
+		console.log(`<< Server: listening to port ${port} >>`);
+	});
+}
+
 
 module.exports = { app };
