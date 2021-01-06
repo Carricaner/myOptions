@@ -7,6 +7,7 @@ const {
 } = process.env;
 const port = NODE_ENV == "test" ? PORT_TEST : PORT;
 
+
 // =====================<< Express Initialization >>=====================
 const express = require("express");
 const cors = require("cors");
@@ -18,9 +19,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+
 // =====================<< Use static files >>=====================
 app.use(express.static("public"));
-
 
 
 // =====================<< Socket.io >>=====================
@@ -35,13 +36,10 @@ app.use(cors());
 
 // =====================<< Redis >>=====================
 const { redisTurnOn } = require("./util/util_redis");
-
-// Turn on redis
-redisTurnOn();
 const { startRedisRefresher } = require("./server/controllers/redisUpdate_controller");
 
-// Turn on redis refresher
-startRedisRefresher(); 
+redisTurnOn();  // Turn on redis
+startRedisRefresher();  // Turn on redis refresher
 
 
 // =====================<< API routes >>=====================
@@ -58,13 +56,12 @@ app.use("/api/" + API_VERSION,
 );
 
 
-// =====================<< Page not found >>=====================
+// =====================<< Error handling >>=====================
 app.use(function(req, res, next) {
 	res.status(404).sendFile(__dirname + "/public/404.html");
 });
 
 
-// =====================<< Error handling >>=====================
 app.use(function(err, req, res, next) {
 	console.log(err);
 	res.status(500).send("Internal Server Error");
@@ -78,4 +75,7 @@ if (NODE_ENV != "production") {
 }
 
 
-module.exports = { app };
+module.exports = { 
+	app, 
+	server,
+};

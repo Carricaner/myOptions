@@ -4,13 +4,17 @@ const { getNowTime } = require("../../util/util_timezone");
 
 function startRedisRefresher() {
 
+	const realtimeUpdateSec = 7 * 1000;
+	const flushCacheSec = 10 * 1000;
+	const timeDisplaySec = 7 * 1000;
+
 	setInterval(() => {
 		let TWtimeParams = getNowTime();
 		if (TWtimeParams.isDay || TWtimeParams.isNight) {
 			addRealtimeData2Container();
 		}
 	},
-	7*1000);
+	realtimeUpdateSec);
 
 	setInterval(() => {
 		let TWtimeParams = getNowTime();
@@ -19,13 +23,13 @@ function startRedisRefresher() {
 			flushRedisContainer("futureContainer");
 		}
 	},
-	10*1000);
+	flushCacheSec);
 
 	setInterval(() => {
 		let TWtimeParams = getNowTime();
 		console.log(TWtimeParams);
 	},
-	5*1000);
+	timeDisplaySec);
     
 }
 

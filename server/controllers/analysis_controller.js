@@ -100,8 +100,6 @@ const getStaticBigguyLeft = (req, res) => {
 
 
 
-
-
 module.exports = {
 	getStaticBigIndex,
 	getStaticOptDis,

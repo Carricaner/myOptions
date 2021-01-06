@@ -100,10 +100,6 @@ const liquidateAllUserParts = (nowTarget) => {
 				}
 			}
 
-			// console.log(userMoneynProfit)
-			// console.log(partsArray)
-			// console.log(moneyleftArray)
-
 			return liquidate(partsArray, moneyleftArray);
 		})
 		.then(() => {
