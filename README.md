@@ -53,6 +53,8 @@ You can log in with the test account below and use the service in MyOptions:
 ## Technologies
 ### Architecture
 
+<img src="https://darrenstylish.s3-ap-northeast-1.amazonaws.com/myOptions/architecture.JPG" alt="drawing" style="width:70%;margin:5px 0px 30px 40px;"/>
+
 ### Backend
 * Environment: **Linux**
 * Server: **Node.js**
