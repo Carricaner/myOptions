@@ -26,7 +26,7 @@ You can log in with the test account below and use the service in MyOptions:
   - demonstration on the realtionship between profit and index of TPE: TAIEX. 
   (Click a cell in the table to generate a plot)
 
-<img src="https://darrenstylish.s3-ap-northeast-1.amazonaws.com/myOptions/WqXRF9VQCZ.gif" alt="drawing" style="width:70%;margin:5px 0px 30px 40px;"/>
+<img src="https://darrenstylish.s3-ap-northeast-1.amazonaws.com/myOptions/qaQmsnYoZi.gif" alt="drawing" style="width:70%;margin:5px 0px 30px 40px;"/>
 
 * Mock Trade System:
   - The real-time index of TXF and TX are ploted.
